@@ -1,16 +1,13 @@
 
 import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Play, Square, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, MessageSquare, Send, ExternalLink, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { MissionPlannerLauncher } from "@/components/MissionPlannerLauncher";
+import { DroneSelector } from "@/components/DroneSelector";
+import { MissionStatus } from "@/components/MissionStatus";
+import { FlightControls } from "@/components/FlightControls";
+import { AIChatInterface } from "@/components/AIChatInterface";
+import { TelemetryDisplay } from "@/components/TelemetryDisplay";
 
 const MissionControl = () => {
   const [selectedDrone, setSelectedDrone] = useState("");
@@ -132,251 +129,34 @@ const MissionControl = () => {
           {/* Mission Planner Launcher and Drone Selection */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <MissionPlannerLauncher />
-
-            <Card className="bg-slate-800/50 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white">Select Drone</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Select value={selectedDrone} onValueChange={setSelectedDrone}>
-                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                    <SelectValue placeholder="Choose drone..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-700 border-slate-600">
-                    {drones.map((drone) => (
-                      <SelectItem key={drone.id} value={drone.id} className="text-white hover:bg-slate-600">
-                        {drone.name} ({drone.id})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-slate-800/50 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white">Mission Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Altitude:</span>
-                    <span className="text-white">{realtimeData.altitude.toFixed(1)}m</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Speed:</span>
-                    <span className="text-white">{realtimeData.speed.toFixed(1)} m/s</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Battery:</span>
-                    <span className="text-white">{realtimeData.battery.toFixed(1)}%</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <DroneSelector 
+              selectedDrone={selectedDrone}
+              onDroneChange={setSelectedDrone}
+              drones={drones}
+            />
+            <MissionStatus realtimeData={realtimeData} />
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Control Panel */}
-            <Card className="bg-slate-800/50 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white">Flight Controls</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Movement Controls */}
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Movement</h3>
-                  <div className="grid grid-cols-3 gap-2 max-w-48 mx-auto">
-                    <div></div>
-                    <Button 
-                      onClick={() => handleControlCommand("MOVE_FORWARD")}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                    >
-                      <ArrowUp className="w-4 h-4" />
-                    </Button>
-                    <div></div>
-                    <Button 
-                      onClick={() => handleControlCommand("TURN_LEFT")}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                    >
-                      <ArrowLeft className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      onClick={() => handleControlCommand("HOVER")}
-                      className="bg-yellow-600 hover:bg-yellow-700 text-black font-medium"
-                    >
-                      <Square className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      onClick={() => handleControlCommand("TURN_RIGHT")}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                    >
-                      <ArrowRight className="w-4 h-4" />
-                    </Button>
-                    <div></div>
-                    <Button 
-                      onClick={() => handleControlCommand("MOVE_BACKWARD")}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                    >
-                      <ArrowDown className="w-4 h-4" />
-                    </Button>
-                    <div></div>
-                  </div>
-                </div>
-
-                {/* Mission Controls */}
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Mission Controls</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button 
-                      onClick={() => handleControlCommand("TAKEOFF")}
-                      className="bg-green-600 hover:bg-green-700 text-black font-medium"
-                    >
-                      <Play className="w-4 h-4 mr-2" />
-                      Takeoff
-                    </Button>
-                    <Button 
-                      onClick={() => handleControlCommand("LAND")}
-                      className="bg-red-600 hover:bg-red-700 text-black font-medium"
-                    >
-                      <Square className="w-4 h-4 mr-2" />
-                      Land
-                    </Button>
-                    <Button 
-                      onClick={() => handleControlCommand("RETURN_TO_HOME")}
-                      className="bg-orange-600 hover:bg-orange-700 text-black font-medium"
-                    >
-                      Return Home
-                    </Button>
-                    <Button 
-                      onClick={() => handleControlCommand("EMERGENCY_STOP")}
-                      className="bg-red-800 hover:bg-red-900 text-white font-medium"
-                    >
-                      Emergency Stop
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <FlightControls onControlCommand={handleControlCommand} />
 
             {/* AI Chat Interface */}
-            <Card className="bg-slate-800/50 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <MessageSquare className="w-5 h-5 mr-2" />
-                  AI Mission Assistant
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="h-64 bg-slate-700/30 rounded-lg p-4 overflow-y-auto space-y-2">
-                  {chatHistory.length === 0 ? (
-                    <p className="text-gray-400 text-center">Start a conversation with the AI assistant to control your drone...</p>
-                  ) : (
-                    chatHistory.map((msg, index) => (
-                      <div key={index} className={`p-2 rounded ${msg.role === 'user' ? 'bg-blue-600/20 ml-4' : 'bg-green-600/20 mr-4'}`}>
-                        <div className="flex justify-between">
-                          <span className="font-semibold text-white">{msg.role === 'user' ? 'You' : 'AI Assistant'}</span>
-                          <span className="text-xs text-gray-400">{msg.timestamp}</span>
-                        </div>
-                        <p className="text-gray-300 text-sm mt-1">{msg.message}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
-                <div className="flex space-x-2">
-                  <Textarea
-                    value={chatMessage}
-                    onChange={(e) => setChatMessage(e.target.value)}
-                    placeholder="Tell the AI what you want the drone to do... (e.g., 'Take off and patrol the area')"
-                    className="bg-slate-700 border-slate-600 resize-none text-white"
-                    rows={2}
-                  />
-                  <Button 
-                    onClick={handleAIChat}
-                    className="bg-green-600 hover:bg-green-700 text-black font-medium"
-                    disabled={!chatMessage.trim()}
-                  >
-                    <Send className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <AIChatInterface 
+              chatMessage={chatMessage}
+              onChatMessageChange={setChatMessage}
+              chatHistory={chatHistory}
+              onSendMessage={handleAIChat}
+            />
           </div>
 
           {/* Real-time Data Display */}
-          <Card className="mt-8 bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <Activity className="w-5 h-5 mr-2" />
-                Real-time Telemetry from Mission Planner
-                {missionPlannerConnected && (
-                  <div className="ml-auto flex items-center text-green-400">
-                    <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-                    <span className="text-sm">Live</span>
-                  </div>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-4 gap-6">
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-white">Position</h3>
-                  <div className="space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Latitude:</span>
-                      <span className="text-white">{realtimeData.gpsLat.toFixed(6)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Longitude:</span>
-                      <span className="text-white">{realtimeData.gpsLon.toFixed(6)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Altitude:</span>
-                      <span className="text-white">{realtimeData.altitude.toFixed(1)}m</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-white">Flight Data</h3>
-                  <div className="space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Ground Speed:</span>
-                      <span className="text-white">{realtimeData.speed.toFixed(1)} m/s</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Status:</span>
-                      <span className="text-green-400">{realtimeData.status}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-white">Power</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Battery:</span>
-                      <span className="text-white">{realtimeData.battery.toFixed(1)}%</span>
-                    </div>
-                    <Progress value={realtimeData.battery} className="h-2" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-white">Connection</h3>
-                  <div className="space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Mission Planner:</span>
-                      <span className={missionPlannerConnected ? "text-green-400" : "text-red-400"}>
-                        {missionPlannerConnected ? "Connected" : "Disconnected"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Signal:</span>
-                      <span className="text-green-400">Strong</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="mt-8">
+            <TelemetryDisplay 
+              realtimeData={realtimeData}
+              missionPlannerConnected={missionPlannerConnected}
+            />
+          </div>
         </div>
       </div>
     </div>
