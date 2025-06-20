@@ -17,6 +17,7 @@ import LearnMore from "./pages/LearnMore";
 import OptimizeOperations from "./pages/OptimizeOperations";
 import RealTimeAnalytics from "./pages/RealTimeAnalytics";
 import AutomatedReports from "./pages/AutomatedReports";
+import MissionControl from "./pages/MissionControl";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/optimize-operations" element={<OptimizeOperations />} />
           <Route path="/real-time-analytics" element={<RealTimeAnalytics />} />
           <Route path="/automated-reports" element={<AutomatedReports />} />
+          <Route path="/mission-control" element={<MissionControl />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

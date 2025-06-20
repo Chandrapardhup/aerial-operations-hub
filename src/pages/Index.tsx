@@ -9,7 +9,7 @@ import { Hero } from "@/components/Hero";
 import { FeatureGrid } from "@/components/FeatureGrid";
 import { StatsSection } from "@/components/StatsSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
-import { ArrowRight, CheckCircle, Zap, Shield, Globe, Users, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle, Zap, Shield, Globe, Users, TrendingUp, Eye, Play } from "lucide-react";
 
 const Index = () => {
   const [activeFeature, setActiveFeature] = useState(0);
@@ -145,6 +145,12 @@ const Index = () => {
               <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 transform hover:scale-105 transition-all duration-300">
                 Start Free Trial
                 <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+            <Link to="/dashboard">
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300">
+                <Eye className="w-4 h-4 mr-2" />
+                View Demo
               </Button>
             </Link>
             <Link to="/learn-more">

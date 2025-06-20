@@ -12,17 +12,45 @@ import { useToast } from "@/hooks/use-toast";
 
 const Reports = () => {
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
+  const [selectedDrone, setSelectedDrone] = useState("");
   const { toast } = useToast();
 
-  const handleGenerateReport = async (reportType: string, templateName?: string) => {
+  const drones = [
+    { id: "DRN-001", name: "Hyderabad-Alpha" },
+    { id: "DRN-002", name: "Warangal-Beta" },
+    { id: "DRN-003", name: "Nizamabad-Gamma" },
+    { id: "DRN-004", name: "Karimnagar-Delta" },
+  ];
+
+  const handleGenerateReport = async (reportType: string, templateName?: string, droneId?: string) => {
+    if (!droneId && !selectedDrone) {
+      toast({
+        title: "Drone Selection Required",
+        description: "Please select a drone before generating the report.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const reportId = templateName || reportType;
+    const drone = droneId || selectedDrone;
+    const droneName = drones.find(d => d.id === drone)?.name || drone;
+    
     setIsGenerating(reportId);
 
     try {
-      // Simulate report generation
+      // Simulate fetching data from Mission Planner
+      toast({
+        title: "Connecting to Mission Planner",
+        description: `Fetching data from Mission Planner for ${droneName}...`,
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Simulate report generation with Mission Planner data
       await new Promise(resolve => setTimeout(resolve, 3000));
 
-      // Create a mock PDF
+      // Create a mock PDF with Mission Planner data
       const pdfContent = `
 %PDF-1.4
 1 0 obj
@@ -51,17 +79,21 @@ endobj
 
 4 0 obj
 <<
-/Length 120
+/Length 200
 >>
 stream
 BT
 /F1 12 Tf
 72 720 Td
-(${templateName || reportType} Report - Telangana Operations) Tj
+(${templateName || reportType} Report - ${droneName}) Tj
+0 -20 Td
+(Generated from Mission Planner Data) Tj
 0 -20 Td
 (Generated on: ${new Date().toLocaleDateString()}) Tj
 0 -20 Td
 (DroneGov Management Platform) Tj
+0 -20 Td
+(Telangana Operations) Tj
 ET
 endstream
 endobj
@@ -79,14 +111,14 @@ trailer
 /Root 1 0 R
 >>
 startxref
-350
+450
 %%EOF`;
 
       const blob = new Blob([pdfContent], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${templateName || reportType}-${new Date().toISOString().split('T')[0]}.pdf`;
+      a.download = `${droneName}-${templateName || reportType}-${new Date().toISOString().split('T')[0]}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -94,13 +126,13 @@ startxref
 
       toast({
         title: "Report Generated Successfully!",
-        description: `${templateName || reportType} report has been generated and downloaded.`,
+        description: `${templateName || reportType} report for ${droneName} has been generated from Mission Planner data.`,
       });
 
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate report. Please try again.",
+        description: "Failed to generate report from Mission Planner. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -111,83 +143,88 @@ startxref
   const reports = [
     {
       id: "RPT-001",
-      title: "Monthly Operations Summary",
+      title: "Monthly Operations Summary - Hyderabad-Alpha",
       type: "Operations",
       date: "2024-06-15",
       status: "Generated",
       size: "2.4 MB",
-      format: "PDF"
+      format: "PDF",
+      drone: "DRN-001"
     },
     {
       id: "RPT-002", 
-      title: "Environmental Impact Analysis",
+      title: "Environmental Impact Analysis - Warangal-Beta",
       type: "Environmental",
       date: "2024-06-14",
       status: "Generated", 
       size: "1.8 MB",
-      format: "PDF"
+      format: "PDF",
+      drone: "DRN-002"
     },
     {
       id: "RPT-003",
-      title: "Drone Fleet Performance",
+      title: "Flight Performance - Nizamabad-Gamma",
       type: "Performance",
       date: "2024-06-13",
       status: "Processing",
       size: "3.1 MB",
-      format: "PDF"
+      format: "PDF",
+      drone: "DRN-003"
     },
     {
       id: "RPT-004",
-      title: "Cost Analysis Q2 2024",
-      type: "Financial",
+      title: "Mission Analysis - Karimnagar-Delta",
+      type: "Mission",
       date: "2024-06-12",
       status: "Generated",
       size: "1.5 MB", 
-      format: "Excel"
+      format: "Excel",
+      drone: "DRN-004"
     },
     {
       id: "RPT-005",
-      title: "Incident Response Log",
+      title: "Incident Response Log - All Drones",
       type: "Incident",
       date: "2024-06-11",
       status: "Generated",
       size: "890 KB",
-      format: "PDF"
+      format: "PDF",
+      drone: "ALL"
     }
   ];
 
   const templates = [
     {
-      name: "Daily Operations Report",
-      description: "Comprehensive daily summary of all drone operations and activities across Telangana",
+      name: "Daily Flight Report",
+      description: "Comprehensive daily flight summary from Mission Planner including telemetry data and mission completion status",
       frequency: "Daily",
-      category: "Operations"
+      category: "Flight Data"
     },
     {
       name: "Weekly Performance Analysis", 
-      description: "Performance metrics and efficiency analysis for the week",
+      description: "Performance metrics and efficiency analysis based on Mission Planner flight logs",
       frequency: "Weekly",
       category: "Performance"
     },
     {
-      name: "Monthly Environmental Impact",
-      description: "Environmental monitoring results and impact assessment for Telangana regions", 
+      name: "Monthly Mission Summary",
+      description: "Mission planning and execution analysis from Mission Planner data for Telangana operations", 
       frequency: "Monthly",
-      category: "Environmental"
+      category: "Mission Planning"
     },
     {
-      name: "Quarterly Financial Summary",
-      description: "Cost analysis and budget performance review",
-      frequency: "Quarterly", 
-      category: "Financial"
+      name: "Battery and Maintenance Report",
+      description: "Battery performance and maintenance recommendations based on Mission Planner telemetry",
+      frequency: "Weekly", 
+      category: "Maintenance"
     }
   ];
 
   const quickStats = [
     { label: "Reports Generated", value: "247", trend: "+12%" },
-    { label: "Data Processed", value: "45.2 TB", trend: "+8%" },
+    { label: "Mission Planner Data", value: "45.2 TB", trend: "+8%" },
     { label: "Active Templates", value: "18", trend: "+3%" },
-    { label: "Automated Reports", value: "156", trend: "+25%" }
+    { label: "Auto-Generated Reports", value: "156", trend: "+25%" }
   ];
 
   return (
@@ -197,8 +234,8 @@ startxref
       <div className="pt-20 px-4 pb-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4">Reports & Analytics</h1>
-            <p className="text-gray-300 text-lg">Generate and manage comprehensive operational reports for Telangana operations</p>
+            <h1 className="text-4xl font-bold text-white mb-4">Mission Planner Reports</h1>
+            <p className="text-gray-300 text-lg">Generate comprehensive reports from Mission Planner data for your drone operations</p>
           </div>
 
           {/* Quick Stats */}
@@ -234,7 +271,7 @@ startxref
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid md:grid-cols-4 gap-4">
+                  <div className="grid md:grid-cols-5 gap-4">
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <Input placeholder="Search reports..." className="pl-10 bg-slate-700 border-slate-600" />
@@ -247,7 +284,20 @@ startxref
                         <SelectItem value="operations">Operations</SelectItem>
                         <SelectItem value="performance">Performance</SelectItem>
                         <SelectItem value="environmental">Environmental</SelectItem>
-                        <SelectItem value="financial">Financial</SelectItem>
+                        <SelectItem value="mission">Mission Planning</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select>
+                      <SelectTrigger className="bg-slate-700 border-slate-600">
+                        <SelectValue placeholder="Drone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {drones.map((drone) => (
+                          <SelectItem key={drone.id} value={drone.id}>
+                            {drone.name}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="ALL">All Drones</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select>
@@ -291,6 +341,7 @@ startxref
                               <span>ID: {report.id}</span>
                               <span>{report.date}</span>
                               <span>{report.size}</span>
+                              <span>Drone: {report.drone === "ALL" ? "All Drones" : drones.find(d => d.id === report.drone)?.name}</span>
                             </div>
                           </div>
                         </div>
@@ -318,7 +369,7 @@ startxref
                             <Button 
                               size="sm" 
                               className="bg-blue-600 hover:bg-blue-700"
-                              onClick={() => handleGenerateReport(report.title)}
+                              onClick={() => handleGenerateReport(report.title, undefined, report.drone)}
                               disabled={isGenerating === report.title}
                             >
                               {isGenerating === report.title ? (
@@ -362,7 +413,17 @@ startxref
                           <Button 
                             size="sm" 
                             className="bg-green-600 hover:bg-green-700"
-                            onClick={() => handleGenerateReport(template.category, template.name)}
+                            onClick={() => {
+                              if (!selectedDrone) {
+                                toast({
+                                  title: "Select Drone First",
+                                  description: "Please select a drone from the dropdown below to generate the report.",
+                                  variant: "destructive"
+                                });
+                                return;
+                              }
+                              handleGenerateReport(template.category, template.name, selectedDrone);
+                            }}
                             disabled={isGenerating === template.name}
                           >
                             {isGenerating === template.name ? (
@@ -376,12 +437,33 @@ startxref
                   </Card>
                 ))}
               </div>
+
+              {/* Drone Selection for Templates */}
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-white">Select Drone for Report Generation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Select value={selectedDrone} onValueChange={setSelectedDrone}>
+                    <SelectTrigger className="bg-slate-700 border-slate-600">
+                      <SelectValue placeholder="Choose drone for report generation..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {drones.map((drone) => (
+                        <SelectItem key={drone.id} value={drone.id}>
+                          {drone.name} ({drone.id})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="create" className="space-y-6">
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Create Custom Report</CardTitle>
+                  <CardTitle className="text-white">Create Custom Mission Planner Report</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
@@ -392,16 +474,33 @@ startxref
                       </div>
                       
                       <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Select Drone</label>
+                        <Select>
+                          <SelectTrigger className="bg-slate-700 border-slate-600">
+                            <SelectValue placeholder="Choose drone" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {drones.map((drone) => (
+                              <SelectItem key={drone.id} value={drone.id}>
+                                {drone.name} ({drone.id})
+                              </SelectItem>
+                            ))}
+                            <SelectItem value="ALL">All Drones</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Report Type</label>
                         <Select>
                           <SelectTrigger className="bg-slate-700 border-slate-600">
                             <SelectValue placeholder="Select report type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="operations">Operations Report</SelectItem>
+                            <SelectItem value="flight">Flight Data Report</SelectItem>
                             <SelectItem value="performance">Performance Analysis</SelectItem>
-                            <SelectItem value="environmental">Environmental Impact</SelectItem>
-                            <SelectItem value="financial">Financial Summary</SelectItem>
+                            <SelectItem value="mission">Mission Planning</SelectItem>
+                            <SelectItem value="maintenance">Maintenance Report</SelectItem>
                             <SelectItem value="incident">Incident Report</SelectItem>
                           </SelectContent>
                         </Select>
@@ -418,6 +517,32 @@ startxref
                     
                     <div className="space-y-4">
                       <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Mission Planner Data Sources</label>
+                        <div className="space-y-2">
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="rounded border-gray-600" defaultChecked />
+                            <span className="text-sm text-gray-300">Flight Telemetry</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="rounded border-gray-600" defaultChecked />
+                            <span className="text-sm text-gray-300">GPS Coordinates</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="rounded border-gray-600" defaultChecked />
+                            <span className="text-sm text-gray-300">Battery Data</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="rounded border-gray-600" />
+                            <span className="text-sm text-gray-300">Mission Waypoints</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="rounded border-gray-600" />
+                            <span className="text-sm text-gray-300">Error Logs</span>
+                          </label>
+                        </div>
+                      </div>
+                      
+                      <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Output Format</label>
                         <Select>
                           <SelectTrigger className="bg-slate-700 border-slate-600">
@@ -431,28 +556,6 @@ startxref
                           </SelectContent>
                         </Select>
                       </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Include Sections</label>
-                        <div className="space-y-2">
-                          <label className="flex items-center space-x-2">
-                            <input type="checkbox" className="rounded border-gray-600" defaultChecked />
-                            <span className="text-sm text-gray-300">Executive Summary</span>
-                          </label>
-                          <label className="flex items-center space-x-2">
-                            <input type="checkbox" className="rounded border-gray-600" defaultChecked />
-                            <span className="text-sm text-gray-300">Operational Data</span>
-                          </label>
-                          <label className="flex items-center space-x-2">
-                            <input type="checkbox" className="rounded border-gray-600" />
-                            <span className="text-sm text-gray-300">Financial Analysis</span>
-                          </label>
-                          <label className="flex items-center space-x-2">
-                            <input type="checkbox" className="rounded border-gray-600" />
-                            <span className="text-sm text-gray-300">Recommendations</span>
-                          </label>
-                        </div>
-                      </div>
                     </div>
                   </div>
                   
@@ -462,13 +565,13 @@ startxref
                     </Button>
                     <Button 
                       className="bg-blue-600 hover:bg-blue-700"
-                      onClick={() => handleGenerateReport("Custom Report")}
-                      disabled={isGenerating === "Custom Report"}
+                      onClick={() => handleGenerateReport("Custom Mission Planner Report")}
+                      disabled={isGenerating === "Custom Mission Planner Report"}
                     >
-                      {isGenerating === "Custom Report" ? (
+                      {isGenerating === "Custom Mission Planner Report" ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                          Generating...
+                          Generating from Mission Planner...
                         </>
                       ) : (
                         "Generate Report"

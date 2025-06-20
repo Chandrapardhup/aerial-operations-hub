@@ -1,11 +1,12 @@
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap } from "lucide-react";
+import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Settings } from "lucide-react";
 
 const Dashboard = () => {
   const [activeDrones, setActiveDrones] = useState(12);
@@ -159,7 +160,7 @@ const Dashboard = () => {
                 <CardTitle className="text-white">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-4 gap-4">
+                <div className="grid md:grid-cols-5 gap-4">
                   <Button className="bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all duration-300">
                     Deploy Drone
                   </Button>
@@ -169,6 +170,12 @@ const Dashboard = () => {
                   <Button className="bg-purple-600 hover:bg-purple-700 transform hover:scale-105 transition-all duration-300">
                     Generate Report
                   </Button>
+                  <Link to="/mission-control">
+                    <Button className="w-full bg-cyan-600 hover:bg-cyan-700 transform hover:scale-105 transition-all duration-300">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Mission Control
+                    </Button>
+                  </Link>
                   <Button className="bg-orange-600 hover:bg-orange-700 transform hover:scale-105 transition-all duration-300">
                     Emergency Stop
                   </Button>
