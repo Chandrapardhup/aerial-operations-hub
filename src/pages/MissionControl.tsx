@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Play, Square, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, MessageSquare, Send, ExternalLink, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { MissionPlannerLauncher } from "@/components/MissionPlannerLauncher";
 
 const MissionControl = () => {
   const [selectedDrone, setSelectedDrone] = useState("");
@@ -51,28 +52,20 @@ const MissionControl = () => {
     return () => clearInterval(interval);
   }, [missionPlannerConnected, selectedDrone]);
 
-  const handleOpenMissionPlanner = () => {
-    // This would trigger the desktop application to open Mission Planner
-    toast({
-      title: "Opening Mission Planner",
-      description: "Launching Mission Planner on your PC...",
-    });
-    
-    // Simulate connection after 3 seconds
-    setTimeout(() => {
-      setMissionPlannerConnected(true);
-      toast({
-        title: "Mission Planner Connected",
-        description: "Successfully connected to Mission Planner",
-      });
-    }, 3000);
-  };
-
   const handleControlCommand = async (command: string) => {
-    if (!selectedDrone || !missionPlannerConnected) {
+    if (!selectedDrone) {
       toast({
-        title: "Error",
-        description: "Please select a drone and connect to Mission Planner first",
+        title: "No Drone Selected",
+        description: "Please select a drone first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!missionPlannerConnected) {
+      toast({
+        title: "Mission Planner Not Connected",
+        description: "Please connect to Mission Planner first",
         variant: "destructive"
       });
       return;
@@ -80,16 +73,22 @@ const MissionControl = () => {
 
     // Send command to Mission Planner
     toast({
-      title: `Command Sent: ${command}`,
-      description: `Sending ${command} command to ${selectedDrone} via Mission Planner`,
+      title: `Command Executed: ${command}`,
+      description: `Sending ${command} command to ${selectedDrone}`,
     });
 
-    // Simulate command execution
-    console.log(`Sending command to Mission Planner: ${command} for drone ${selectedDrone}`);
+    console.log(`Executing command: ${command} for drone ${selectedDrone}`);
   };
 
   const handleAIChat = async () => {
-    if (!chatMessage.trim()) return;
+    if (!chatMessage.trim()) {
+      toast({
+        title: "Empty Message",
+        description: "Please enter a message",
+        variant: "destructive"
+      });
+      return;
+    }
 
     const userMessage = {
       role: "user",
@@ -102,7 +101,7 @@ const MissionControl = () => {
     // Simulate AI processing and command generation
     const aiResponse = {
       role: "assistant", 
-      message: `Processing command: "${chatMessage}". Sending instructions to Mission Planner for drone ${selectedDrone || "N/A"}.`,
+      message: `Processing command: "${chatMessage}". ${selectedDrone ? `Sending instructions to drone ${selectedDrone}` : 'Please select a drone first'}.`,
       timestamp: new Date().toLocaleTimeString()
     };
 
@@ -130,31 +129,9 @@ const MissionControl = () => {
             <p className="text-gray-300 text-lg">Real-time drone control and mission planning interface</p>
           </div>
 
-          {/* Connection Status and Drone Selection */}
+          {/* Mission Planner Launcher and Drone Selection */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-slate-800/50 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <ExternalLink className="w-5 h-5 mr-2" />
-                  Mission Planner
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-300">Status:</span>
-                  <Badge className={missionPlannerConnected ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}>
-                    {missionPlannerConnected ? 'Connected' : 'Disconnected'}
-                  </Badge>
-                </div>
-                <Button 
-                  onClick={handleOpenMissionPlanner}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                  disabled={missionPlannerConnected}
-                >
-                  {missionPlannerConnected ? 'Mission Planner Active' : 'Open Mission Planner'}
-                </Button>
-              </CardContent>
-            </Card>
+            <MissionPlannerLauncher />
 
             <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader>
@@ -162,12 +139,12 @@ const MissionControl = () => {
               </CardHeader>
               <CardContent>
                 <Select value={selectedDrone} onValueChange={setSelectedDrone}>
-                  <SelectTrigger className="bg-slate-700 border-slate-600">
+                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                     <SelectValue placeholder="Choose drone..." />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-slate-700 border-slate-600">
                     {drones.map((drone) => (
-                      <SelectItem key={drone.id} value={drone.id}>
+                      <SelectItem key={drone.id} value={drone.id} className="text-white hover:bg-slate-600">
                         {drone.name} ({drone.id})
                       </SelectItem>
                     ))}
@@ -213,33 +190,33 @@ const MissionControl = () => {
                     <div></div>
                     <Button 
                       onClick={() => handleControlCommand("MOVE_FORWARD")}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
                     >
                       <ArrowUp className="w-4 h-4" />
                     </Button>
                     <div></div>
                     <Button 
                       onClick={() => handleControlCommand("TURN_LEFT")}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
                     >
                       <ArrowLeft className="w-4 h-4" />
                     </Button>
                     <Button 
                       onClick={() => handleControlCommand("HOVER")}
-                      className="bg-yellow-600 hover:bg-yellow-700"
+                      className="bg-yellow-600 hover:bg-yellow-700 text-black font-medium"
                     >
                       <Square className="w-4 h-4" />
                     </Button>
                     <Button 
                       onClick={() => handleControlCommand("TURN_RIGHT")}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
                     >
                       <ArrowRight className="w-4 h-4" />
                     </Button>
                     <div></div>
                     <Button 
                       onClick={() => handleControlCommand("MOVE_BACKWARD")}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
                     >
                       <ArrowDown className="w-4 h-4" />
                     </Button>
@@ -253,27 +230,27 @@ const MissionControl = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <Button 
                       onClick={() => handleControlCommand("TAKEOFF")}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-green-600 hover:bg-green-700 text-black font-medium"
                     >
                       <Play className="w-4 h-4 mr-2" />
                       Takeoff
                     </Button>
                     <Button 
                       onClick={() => handleControlCommand("LAND")}
-                      className="bg-red-600 hover:bg-red-700"
+                      className="bg-red-600 hover:bg-red-700 text-black font-medium"
                     >
                       <Square className="w-4 h-4 mr-2" />
                       Land
                     </Button>
                     <Button 
                       onClick={() => handleControlCommand("RETURN_TO_HOME")}
-                      className="bg-orange-600 hover:bg-orange-700"
+                      className="bg-orange-600 hover:bg-orange-700 text-black font-medium"
                     >
                       Return Home
                     </Button>
                     <Button 
                       onClick={() => handleControlCommand("EMERGENCY_STOP")}
-                      className="bg-red-800 hover:bg-red-900"
+                      className="bg-red-800 hover:bg-red-900 text-white font-medium"
                     >
                       Emergency Stop
                     </Button>
@@ -311,12 +288,12 @@ const MissionControl = () => {
                     value={chatMessage}
                     onChange={(e) => setChatMessage(e.target.value)}
                     placeholder="Tell the AI what you want the drone to do... (e.g., 'Take off and patrol the area')"
-                    className="bg-slate-700 border-slate-600 resize-none"
+                    className="bg-slate-700 border-slate-600 resize-none text-white"
                     rows={2}
                   />
                   <Button 
                     onClick={handleAIChat}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-green-600 hover:bg-green-700 text-black font-medium"
                     disabled={!chatMessage.trim()}
                   >
                     <Send className="w-4 h-4" />
