@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Zap, AlertTriangle, Play, Server } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { missionPlannerService } from "@/services/missionPlannerService";
 import { localServerService } from "@/services/localServerService";
+import { MissionPlannerStatus } from "@/components/MissionPlannerStatus";
+import { LaunchInstructions } from "@/components/LaunchInstructions";
+import { LaunchButtons } from "@/components/LaunchButtons";
 
 interface MissionPlannerLauncherProps {
   onConnectionChange: (connected: boolean) => void;
@@ -154,19 +155,6 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
     }
   };
 
-  const getStatusColor = () => {
-    if (isConnected) return 'bg-green-500/20 text-green-300';
-    if (missionPlannerStatus === 'running') return 'bg-yellow-500/20 text-yellow-300';
-    return 'bg-red-500/20 text-red-300';
-  };
-
-  const getStatusText = () => {
-    if (isConnected) return 'Connected';
-    if (missionPlannerStatus === 'running') return 'Running (Not Connected)';
-    if (missionPlannerStatus === 'launching') return 'Launching...';
-    return 'Not Running';
-  };
-
   return (
     <Card className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transition-all duration-300">
       <CardHeader>
@@ -176,66 +164,22 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center justify-between">
-          <span className="text-gray-300">Application Status:</span>
-          <Badge className={getStatusColor()}>
-            {getStatusText()}
-          </Badge>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-gray-300">Installation Path:</span>
-          <Badge className="bg-blue-500/20 text-blue-300 text-xs">
-            Mission Planner.lnk
-          </Badge>
-        </div>
+        <MissionPlannerStatus 
+          isConnected={isConnected}
+          missionPlannerStatus={missionPlannerStatus}
+        />
         
-        <div className="flex items-start space-x-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-          <Play className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-          <div className="text-sm text-green-300">
-            <p className="font-medium">Ready to Launch:</p>
-            <p className="mt-1 text-xs">Click the button below to launch Mission Planner from your installation.</p>
-          </div>
-        </div>
-
-        {missionPlannerStatus === 'running' && !isConnected && (
-          <div className="flex items-start space-x-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-yellow-300">
-              <p className="font-medium">Mission Planner Setup Required:</p>
-              <ol className="mt-1 space-y-1 text-xs">
-                <li>1. Go to Config/Tuning → Planner</li>
-                <li>2. Enable "WebSocket Server" (port 8080)</li>
-                <li>3. Connect your drone to Mission Planner</li>
-                <li>4. Use the connection panel to connect</li>
-              </ol>
-            </div>
-          </div>
-        )}
+        <LaunchInstructions 
+          missionPlannerStatus={missionPlannerStatus}
+          isConnected={isConnected}
+        />
         
-        <Button 
-          onClick={handleLaunchMissionPlanner}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
-          disabled={isLaunching || missionPlannerStatus === 'launching'}
-        >
-          <Zap className="w-4 h-4 mr-2" />
-          {isLaunching || missionPlannerStatus === 'launching' ? 'Launching...' : 'Launch Mission Planner'}
-        </Button>
-
-        <Button 
-          onClick={checkLocalServerStatus}
-          variant="outline"
-          className="w-full border-slate-600 text-gray-300 hover:bg-slate-700"
-        >
-          <Server className="w-4 h-4 mr-2" />
-          Refresh Server Status
-        </Button>
-        
-        {isConnected && (
-          <div className="text-sm text-green-400 text-center">
-            Mission Planner is connected and ready
-          </div>
-        )}
+        <LaunchButtons 
+          onLaunchMissionPlanner={handleLaunchMissionPlanner}
+          onCheckServerStatus={checkLocalServerStatus}
+          isLaunching={isLaunching}
+          missionPlannerStatus={missionPlannerStatus}
+        />
       </CardContent>
     </Card>
   );
