@@ -2,66 +2,40 @@
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Zap, Globe, Users, Award, Target } from "lucide-react";
+import { Shield, Users, Zap, Award, MapPin, Clock } from "lucide-react";
 
 const About = () => {
-  const features = [
-    {
-      icon: Shield,
-      title: "Enterprise Security",
-      description: "Military-grade encryption and compliance with government security standards."
-    },
-    {
-      icon: Zap,
-      title: "Real-Time Processing",
-      description: "Instant data processing and live monitoring capabilities for immediate response."
-    },
-    {
-      icon: Globe,
-      title: "Global Operations",
-      description: "Worldwide deployment capabilities with satellite connectivity and mesh networks."
-    },
-    {
-      icon: Users,
-      title: "Expert Support",
-      description: "24/7 technical support from drone operations specialists and engineers."
-    },
-    {
-      icon: Award,
-      title: "Proven Results",
-      description: "Track record of successful deployments across multiple government agencies."
-    },
-    {
-      icon: Target,
-      title: "Mission-Critical",
-      description: "Designed specifically for high-stakes government and public safety operations."
-    }
+  const stats = [
+    { icon: Zap, label: "Active Drones", value: "150+" },
+    { icon: MapPin, label: "Districts Covered", value: "33" },
+    { icon: Clock, label: "Flight Hours", value: "50,000+" },
+    { icon: Award, label: "Success Rate", value: "99.2%" },
   ];
 
-  const team = [
+  const teamMembers = [
     {
-      name: "Dr. Sarah Chen",
-      role: "Chief Technology Officer",
-      expertise: "Autonomous Systems & AI",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b495?w=300&h=300&fit=crop&crop=face"
+      name: "Dr. Rajesh Kumar",
+      role: "Director of Drone Operations",
+      department: "Technology & Innovation",
+      image: "/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png"
     },
     {
-      name: "Michael Rodriguez",
-      role: "Director of Operations",
-      expertise: "Government Relations & Compliance",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
+      name: "Priya Sharma",
+      role: "Chief Technology Officer", 
+      department: "IT & Digital Services",
+      image: "/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png"
     },
     {
-      name: "Dr. Emily Johnson",
-      role: "Lead Systems Engineer",
-      expertise: "Drone Technology & Integration",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face"
+      name: "Suresh Reddy",
+      role: "Operations Manager",
+      department: "Municipal Administration",
+      image: "/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png"
     },
     {
-      name: "David Park",
-      role: "Security Architect",
-      expertise: "Cybersecurity & Data Protection",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face"
+      name: "Anitha Rao",
+      role: "Safety & Compliance Head",
+      department: "Regulatory Affairs",
+      image: "/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png"
     }
   ];
 
@@ -71,127 +45,133 @@ const About = () => {
       
       <div className="pt-20 px-4 pb-8">
         <div className="max-w-7xl mx-auto">
-          {/* Hero Section */}
-          <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold text-white mb-6">
-              About DroneGov
-            </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-              Leading the future of government drone operations with cutting-edge technology, 
-              uncompromising security, and mission-critical reliability.
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-5xl font-bold text-white mb-6">About DRONEGOV</h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Leading Telangana's digital transformation through innovative drone technology for enhanced governance and public services
             </p>
-            <div className="flex justify-center space-x-4">
-              <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 px-4 py-2">
-                Government Certified
-              </Badge>
-              <Badge className="bg-green-500/20 text-green-300 border-green-500/30 px-4 py-2">
-                ISO 27001 Compliant
-              </Badge>
-              <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 px-4 py-2">
-                99.9% Uptime
-              </Badge>
-            </div>
           </div>
 
-          {/* Mission Statement */}
-          <Card className="bg-slate-800/50 border-slate-700 mb-16">
-            <CardContent className="p-8">
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div>
-                  <h2 className="text-3xl font-bold text-white mb-4">Our Mission</h2>
-                  <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                    To revolutionize government operations through intelligent drone technology, 
-                    providing real-time monitoring, data-driven insights, and automated solutions 
-                    that enhance public safety and operational efficiency.
-                  </p>
-                  <p className="text-gray-300 text-lg leading-relaxed">
-                    We believe in empowering government agencies with the tools they need to 
-                    serve their communities better while maintaining the highest standards of 
-                    security and compliance.
-                  </p>
-                </div>
-                <div className="relative">
-                  <img 
-                    src="/lovable-uploads/fb9d08aa-ef94-4acd-85e5-cecbd156b7f8.png" 
-                    alt="Drone Technology"
-                    className="w-full h-auto rounded-xl shadow-lg"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-xl"></div>
+          {/* Hero Image */}
+          <div className="mb-12">
+            <Card className="bg-slate-800/50 border-slate-700 overflow-hidden">
+              <div className="relative h-96">
+                <img 
+                  src="/lovable-uploads/fb9d08aa-ef94-4acd-85e5-cecbd156b7f8.png" 
+                  alt="Advanced drone technology for government operations" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end">
+                  <div className="p-8">
+                    <h2 className="text-3xl font-bold text-white mb-2">Innovative Drone Solutions</h2>
+                    <p className="text-gray-300">Empowering smart governance through cutting-edge aerial technology</p>
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Key Features */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-white text-center mb-12">Why Choose DroneGov?</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map((feature, index) => {
-                const Icon = feature.icon;
-                return (
-                  <Card 
-                    key={index} 
-                    className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transform hover:scale-105 transition-all duration-300"
-                  >
-                    <CardHeader>
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <CardTitle className="text-white">{feature.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-300">{feature.description}</p>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+            </Card>
           </div>
 
-          {/* Team Section */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-white text-center mb-12">Our Expert Team</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {team.map((member, index) => (
-                <Card 
-                  key={index} 
-                  className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transform hover:scale-105 transition-all duration-300"
-                >
-                  <CardContent className="p-6 text-center">
-                    <img 
-                      src={member.image} 
-                      alt={member.name}
-                      className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                    />
-                    <h3 className="text-lg font-semibold text-white mb-1">{member.name}</h3>
-                    <p className="text-blue-300 text-sm mb-2">{member.role}</p>
-                    <p className="text-gray-400 text-sm">{member.expertise}</p>
+          {/* Stats */}
+          <div className="grid md:grid-cols-4 gap-6 mb-12">
+            {stats.map((stat, index) => {
+              const Icon = stat.icon;
+              return (
+                <Card key={index} className="bg-slate-800/50 border-slate-700 text-center hover:bg-slate-800/70 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <Icon className="w-8 h-8 text-blue-400 mx-auto mb-3" />
+                    <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+                    <div className="text-gray-300">{stat.label}</div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          {/* Stats Section */}
-          <Card className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-500/30">
-            <CardContent className="p-8">
-              <div className="grid md:grid-cols-4 gap-8 text-center">
-                <div>
-                  <div className="text-4xl font-bold text-white mb-2">500+</div>
-                  <div className="text-gray-300">Active Drones</div>
+          <div className="grid lg:grid-cols-2 gap-12 mb-12">
+            {/* Mission */}
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <Shield className="w-6 h-6 mr-3 text-blue-400" />
+                  Our Mission
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-gray-300 leading-relaxed">
+                  To revolutionize public service delivery in Telangana through the strategic deployment of autonomous drone technology, enhancing efficiency, transparency, and citizen satisfaction across all government operations.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30">✓</Badge>
+                    <span className="text-gray-300">Enhance operational efficiency</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30">✓</Badge>
+                    <span className="text-gray-300">Improve citizen services</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30">✓</Badge>
+                    <span className="text-gray-300">Ensure environmental sustainability</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30">✓</Badge>
+                    <span className="text-gray-300">Promote technological innovation</span>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-4xl font-bold text-white mb-2">50+</div>
-                  <div className="text-gray-300">Government Agencies</div>
+              </CardContent>
+            </Card>
+
+            {/* Vision */}
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <Zap className="w-6 h-6 mr-3 text-purple-400" />
+                  Our Vision
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-gray-300 leading-relaxed">
+                  To establish Telangana as a global leader in drone-enabled governance, creating a model for other states and nations while building a sustainable, technology-driven ecosystem for public administration.
+                </p>
+                <div className="bg-slate-700/30 p-4 rounded-lg">
+                  <h4 className="text-white font-semibold mb-2">Key Focus Areas</h4>
+                  <ul className="text-gray-300 text-sm space-y-1">
+                    <li>• Smart city infrastructure development</li>
+                    <li>• Emergency response optimization</li>
+                    <li>• Environmental monitoring and protection</li>
+                    <li>• Agricultural technology advancement</li>
+                    <li>• Public safety and security enhancement</li>
+                  </ul>
                 </div>
-                <div>
-                  <div className="text-4xl font-bold text-white mb-2">10K+</div>
-                  <div className="text-gray-300">Missions Completed</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-white mb-2">99.9%</div>
-                  <div className="text-gray-300">System Uptime</div>
-                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Team */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <Users className="w-6 h-6 mr-3 text-green-400" />
+                Leadership Team
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {teamMembers.map((member, index) => (
+                  <div key={index} className="text-center group">
+                    <div className="relative mb-4">
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-slate-600 group-hover:border-blue-400 transition-colors duration-300"
+                      />
+                    </div>
+                    <h3 className="text-white font-semibold mb-1">{member.name}</h3>
+                    <p className="text-blue-400 text-sm mb-1">{member.role}</p>
+                    <p className="text-gray-400 text-xs">{member.department}</p>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>

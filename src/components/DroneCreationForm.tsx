@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, Drone, Settings, Camera, Battery, Zap } from "lucide-react";
+import { X, Plus, Zap, Settings, Camera, Battery } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface DroneCreationFormProps {
@@ -133,7 +132,7 @@ export const DroneCreationForm = ({ onClose, onDroneCreated }: DroneCreationForm
       <div className="bg-slate-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-slate-800 border-b border-slate-700 p-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white flex items-center">
-            <Drone className="w-6 h-6 mr-2 text-blue-400" />
+            <Zap className="w-6 h-6 mr-2 text-blue-400" />
             Create New Drone
           </h2>
           <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-400 hover:text-white">

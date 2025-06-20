@@ -161,24 +161,32 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-5 gap-4">
-                  <Button className="bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all duration-300">
-                    Deploy Drone
-                  </Button>
-                  <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all duration-300">
-                    Start Mission
-                  </Button>
-                  <Button className="bg-purple-600 hover:bg-purple-700 transform hover:scale-105 transition-all duration-300">
-                    Generate Report
-                  </Button>
+                  <Link to="/deploy-drone">
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all duration-300">
+                      Deploy Drone
+                    </Button>
+                  </Link>
+                  <Link to="/start-mission">
+                    <Button className="w-full bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all duration-300">
+                      Start Mission
+                    </Button>
+                  </Link>
+                  <Link to="/generate-report">
+                    <Button className="w-full bg-purple-600 hover:bg-purple-700 transform hover:scale-105 transition-all duration-300">
+                      Generate Report
+                    </Button>
+                  </Link>
                   <Link to="/mission-control">
                     <Button className="w-full bg-cyan-600 hover:bg-cyan-700 transform hover:scale-105 transition-all duration-300">
                       <Settings className="w-4 h-4 mr-2" />
                       Mission Control
                     </Button>
                   </Link>
-                  <Button className="bg-orange-600 hover:bg-orange-700 transform hover:scale-105 transition-all duration-300">
-                    Emergency Stop
-                  </Button>
+                  <Link to="/emergency-stop">
+                    <Button className="w-full bg-red-600 hover:bg-red-700 transform hover:scale-105 transition-all duration-300">
+                      Emergency Stop
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

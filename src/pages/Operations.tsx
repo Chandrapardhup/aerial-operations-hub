@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { DroneCreationForm } from "@/components/DroneCreationForm";
-import { MapPin, Play, Pause, Square, Settings, AlertCircle, CheckCircle, Plus, Drone } from "lucide-react";
+import { MapPin, Play, Pause, Square, Settings, AlertCircle, CheckCircle, Plus, Zap } from "lucide-react";
 
 const Operations = () => {
   const [selectedMission, setSelectedMission] = useState(null);
@@ -135,24 +136,32 @@ const Operations = () => {
                         <div className="flex space-x-2">
                           {mission.status !== 'Completed' && (
                             <>
-                              <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                                <Play className="w-4 h-4 mr-1" />
-                                Resume
-                              </Button>
-                              <Button size="sm" variant="outline" className="border-gray-600">
-                                <Pause className="w-4 h-4 mr-1" />
-                                Pause
-                              </Button>
-                              <Button size="sm" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600">
-                                <Square className="w-4 h-4 mr-1" />
-                                Stop
-                              </Button>
+                              <Link to="/mission-resume" className="flex-1">
+                                <Button size="sm" className="bg-green-600 hover:bg-green-700 w-full">
+                                  <Play className="w-4 h-4 mr-1" />
+                                  Resume
+                                </Button>
+                              </Link>
+                              <Link to="/mission-pause" className="flex-1">
+                                <Button size="sm" variant="outline" className="border-gray-600 w-full">
+                                  <Pause className="w-4 h-4 mr-1" />
+                                  Pause
+                                </Button>
+                              </Link>
+                              <Link to="/mission-stop" className="flex-1">
+                                <Button size="sm" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600 w-full">
+                                  <Square className="w-4 h-4 mr-1" />
+                                  Stop
+                                </Button>
+                              </Link>
                             </>
                           )}
-                          <Button size="sm" variant="outline" className="border-gray-600">
-                            <Settings className="w-4 h-4 mr-1" />
-                            Settings
-                          </Button>
+                          <Link to="/mission-settings" className="flex-1">
+                            <Button size="sm" variant="outline" className="border-gray-600 w-full">
+                              <Settings className="w-4 h-4 mr-1" />
+                              Settings
+                            </Button>
+                          </Link>
                         </div>
                       </CardContent>
                     </Card>
@@ -165,15 +174,21 @@ const Operations = () => {
                       <CardTitle className="text-white">Mission Control</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Create New Mission
-                      </Button>
-                      <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                        Mission Templates
-                      </Button>
-                      <Button className="w-full bg-green-600 hover:bg-green-700">
-                        Emergency Response
-                      </Button>
+                      <Link to="/create-mission">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                          Create New Mission
+                        </Button>
+                      </Link>
+                      <Link to="/mission-templates">
+                        <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                          Mission Templates
+                        </Button>
+                      </Link>
+                      <Link to="/emergency-response">
+                        <Button className="w-full bg-green-600 hover:bg-green-700">
+                          Emergency Response
+                        </Button>
+                      </Link>
                     </CardContent>
                   </Card>
                 </div>
@@ -198,7 +213,7 @@ const Operations = () => {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-white flex items-center">
-                          <Drone className="w-5 h-5 mr-2 text-blue-400" />
+                          <Zap className="w-5 h-5 mr-2 text-blue-400" />
                           {drone.id}
                         </CardTitle>
                         <Badge className={`${
@@ -231,12 +246,16 @@ const Operations = () => {
                       </div>
 
                       <div className="flex space-x-2">
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 flex-1">
-                          Control
-                        </Button>
-                        <Button size="sm" variant="outline" className="border-gray-600">
-                          <Settings className="w-4 h-4" />
-                        </Button>
+                        <Link to="/drone-control" className="flex-1">
+                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700 w-full">
+                            Control
+                          </Button>
+                        </Link>
+                        <Link to="/drone-settings">
+                          <Button size="sm" variant="outline" className="border-gray-600">
+                            <Settings className="w-4 h-4" />
+                          </Button>
+                        </Link>
                       </div>
                     </CardContent>
                   </Card>
@@ -254,22 +273,30 @@ const Operations = () => {
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold text-white">Quick Mission Templates</h3>
                       <div className="space-y-2">
-                        <Button className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-left">
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          Waste Collection Route
-                        </Button>
-                        <Button className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-left">
-                          <AlertCircle className="w-4 h-4 mr-2" />
-                          Emergency Response
-                        </Button>
-                        <Button className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-left">
-                          <MapPin className="w-4 h-4 mr-2" />
-                          Perimeter Patrol
-                        </Button>
-                        <Button className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-left">
-                          <Settings className="w-4 h-4 mr-2" />
-                          Environmental Scan
-                        </Button>
+                        <Link to="/waste-collection-template">
+                          <Button className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-left">
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Waste Collection Route
+                          </Button>
+                        </Link>
+                        <Link to="/emergency-template">
+                          <Button className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-left">
+                            <AlertCircle className="w-4 h-4 mr-2" />
+                            Emergency Response
+                          </Button>
+                        </Link>
+                        <Link to="/patrol-template">
+                          <Button className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-left">
+                            <MapPin className="w-4 h-4 mr-2" />
+                            Perimeter Patrol
+                          </Button>
+                        </Link>
+                        <Link to="/environmental-template">
+                          <Button className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-left">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Environmental Scan
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                     
@@ -277,9 +304,11 @@ const Operations = () => {
                       <h3 className="text-lg font-semibold text-white">Mission Parameters</h3>
                       <div className="space-y-4 p-4 bg-slate-700/30 rounded-lg">
                         <p className="text-gray-300">Select a mission template to configure parameters and assign drone resources.</p>
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                          Create Custom Mission
-                        </Button>
+                        <Link to="/custom-mission">
+                          <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                            Create Custom Mission
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </div>
