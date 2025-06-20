@@ -136,11 +136,11 @@ const RealTimeAnalytics = () => {
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-white text-lg">{region.name}</CardTitle>
-                      <Badge className={`${
+                      <Badge className={
                         region.status === 'Active' 
                           ? 'bg-green-500/20 text-green-300 border-green-500/30'
                           : 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
-                      }`}>
+                      }>
                         {region.status}
                       </Badge>
                     </div>
@@ -264,7 +264,7 @@ const RealTimeAnalytics = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Data Latency</span>
-                      <span className="text-white">< 1s</span>
+                      <span className="text-white">&lt; 1s</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Processing</span>
