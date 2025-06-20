@@ -61,38 +61,52 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
           description: "Mission Planner is starting up. Please wait for it to fully load.",
         });
       } else {
-        // For web version, attempt to open Mission Planner via various methods
-        const possiblePaths = [
-          'missionplanner://', // Protocol handler if registered
-          'file:///C:/Program%20Files/Mission%20Planner/MissionPlanner.exe',
-          'file:///C:/Program%20Files%20(x86)/Mission%20Planner/MissionPlanner.exe'
-        ];
-
-        let launched = false;
-        for (const path of possiblePaths) {
-          try {
-            window.open(path);
-            launched = true;
-            break;
-          } catch (error) {
-            continue;
-          }
-        }
-
-        if (launched) {
+        // For web version, attempt to open Mission Planner from the specific path
+        const missionPlannerPath = "C:\\Users\\chand\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Mission Planner\\Mission Planner.lnk";
+        
+        try {
+          // Try to open the specific shortcut file
+          window.open(`file:///${missionPlannerPath}`);
           setMissionPlannerStatus('running');
           toast({
             title: "Mission Planner Launch Attempted",
-            description: "Attempting to open Mission Planner. If it doesn't open, please start it manually.",
+            description: "Attempting to open Mission Planner from the specified path.",
           });
-        } else {
-          // Fallback instructions
-          setMissionPlannerStatus('not-running');
-          toast({
-            title: "Manual Launch Required",
-            description: "Please start Mission Planner manually from your desktop or Start menu.",
-            duration: 5000
-          });
+        } catch (error) {
+          console.error('Failed to launch from specific path:', error);
+          
+          // Fallback to other methods
+          const fallbackPaths = [
+            'missionplanner://', // Protocol handler if registered
+            'file:///C:/Program%20Files/Mission%20Planner/MissionPlanner.exe',
+            'file:///C:/Program%20Files%20(x86)/Mission%20Planner/MissionPlanner.exe'
+          ];
+
+          let launched = false;
+          for (const path of fallbackPaths) {
+            try {
+              window.open(path);
+              launched = true;
+              break;
+            } catch (fallbackError) {
+              continue;
+            }
+          }
+
+          if (launched) {
+            setMissionPlannerStatus('running');
+            toast({
+              title: "Mission Planner Launch Attempted",
+              description: "Attempting to open Mission Planner using fallback method.",
+            });
+          } else {
+            setMissionPlannerStatus('not-running');
+            toast({
+              title: "Manual Launch Required",
+              description: "Please start Mission Planner manually from your desktop or Start menu.",
+              duration: 5000
+            });
+          }
         }
       }
     } catch (error) {
