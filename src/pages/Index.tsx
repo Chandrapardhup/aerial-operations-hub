@@ -48,7 +48,7 @@ const Index = () => {
     {
       title: "Waste Management",
       description: "Monitor and optimize waste collection routes with real-time tracking",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop"
+      image: "/lovable-uploads/8ccaab82-3ad5-4570-869a-37f2aafe9d52.png"
     },
     {
       title: "Environmental Monitoring",

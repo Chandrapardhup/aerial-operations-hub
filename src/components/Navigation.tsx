@@ -26,7 +26,7 @@ export const Navigation = () => {
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 p-1">
               <img 
-                src="/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png" 
+                src="/lovable-uploads/0c28f1d2-fe07-4e63-b3cb-a1b87d903f77.png" 
                 alt="Telangana Government Logo" 
                 className="w-full h-full object-contain"
               />
