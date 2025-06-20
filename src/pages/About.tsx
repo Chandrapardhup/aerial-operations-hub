@@ -3,6 +3,7 @@ import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Zap, Award, MapPin, Clock } from "lucide-react";
+import WasteManagementVideo from "@/components/WasteManagementVideo";
 
 const About = () => {
   const stats = [
@@ -25,6 +26,9 @@ const About = () => {
               Leading Telangana's digital transformation through innovative drone technology for enhanced governance and public services
             </p>
           </div>
+
+          {/* Waste Management Video */}
+          <WasteManagementVideo />
 
           {/* Hero Image */}
           <div className="mb-12">
