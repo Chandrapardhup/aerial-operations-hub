@@ -1,66 +1,130 @@
 
+import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Phone, Mail, Clock, Send, MessageSquare } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, MessageSquare, CheckCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    organization: '',
+    inquiryType: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
   const contactInfo = [
     {
       icon: MapPin,
       title: "Headquarters",
-      details: ["1234 Government Plaza", "Washington, DC 20001", "United States"],
+      details: ["T-Hub, Hyderabad", "Telangana, India", "500081"],
       color: "from-blue-500 to-cyan-500"
     },
     {
       icon: Phone,
       title: "Phone Support", 
-      details: ["+1 (555) 123-4567", "24/7 Emergency Line", "+1 (555) 987-6543"],
+      details: ["+91 8978993018", "24/7 Emergency Line", "+91 8978993018"],
       color: "from-green-500 to-emerald-500"
     },
     {
       icon: Mail,
       title: "Email Contact",
-      details: ["support@dronegov.com", "sales@dronegov.com", "security@dronegov.com"],
+      details: ["chandrapardhup@gmail.com", "support@dronegov.com", "sales@dronegov.com"],
       color: "from-purple-500 to-pink-500"
     },
     {
       icon: Clock,
       title: "Business Hours",
-      details: ["Mon - Fri: 8:00 AM - 8:00 PM EST", "Sat: 9:00 AM - 5:00 PM EST", "24/7 Emergency Support"],
+      details: ["Mon - Fri: 9:00 AM - 6:00 PM IST", "Sat: 10:00 AM - 4:00 PM IST", "24/7 Emergency Support"],
       color: "from-orange-500 to-red-500"
     }
   ];
 
   const offices = [
     {
-      city: "Washington, DC",
-      address: "1234 Government Plaza, DC 20001",
-      phone: "+1 (555) 123-4567",
-      type: "Headquarters"
+      city: "Hyderabad (HQ)",
+      address: "T-Hub, IIIT-H Campus, Gachibowli, Hyderabad, Telangana 500081",
+      phone: "+91 8978993018",
+      type: "Headquarters",
+      email: "chandrapardhup@gmail.com"
     },
     {
-      city: "San Francisco, CA", 
-      address: "567 Tech Center Blvd, CA 94105",
-      phone: "+1 (555) 234-5678",
-      type: "West Coast Operations"
-    },
-    {
-      city: "Austin, TX",
-      address: "890 Innovation Drive, TX 78701", 
-      phone: "+1 (555) 345-6789",
-      type: "South Regional Hub"
-    },
-    {
-      city: "Chicago, IL",
-      address: "321 Midwest Plaza, IL 60601",
-      phone: "+1 (555) 456-7890", 
-      type: "Central Operations"
+      city: "Hyderabad Regional", 
+      address: "T-Hub, IIIT-H Campus, Gachibowli, Hyderabad, Telangana 500081",
+      phone: "+91 8978993018",
+      type: "Regional Operations",
+      email: "chandrapardhup@gmail.com"
     }
   ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Simulate form submission - in real app, this would send to your backend
+      // For now, we'll simulate sending to chandrapardhup@gmail.com
+      const emailData = {
+        to: 'chandrapardhup@gmail.com',
+        subject: `New Contact Form Submission - ${formData.inquiryType}`,
+        body: `
+          Name: ${formData.firstName} ${formData.lastName}
+          Email: ${formData.email}
+          Phone: ${formData.phone}
+          Organization: ${formData.organization}
+          Inquiry Type: ${formData.inquiryType}
+          Message: ${formData.message}
+        `
+      };
+
+      console.log('Sending email to:', emailData.to);
+      console.log('Email content:', emailData);
+
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      toast({
+        title: "Message Sent Successfully!",
+        description: "Your message has been sent to our team. We'll get back to you within 24 hours.",
+      });
+
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        organization: '',
+        inquiryType: '',
+        message: ''
+      });
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again or contact us directly.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
@@ -71,7 +135,7 @@ const Contact = () => {
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-white mb-6">Contact Us</h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Get in touch with our team of experts. We're here to help with your drone management needs and answer any questions you may have.
+              Get in touch with our team of experts in Hyderabad. We're here to help with your drone management needs across Telangana and answer any questions you may have.
             </p>
           </div>
 
@@ -111,75 +175,123 @@ const Contact = () => {
                   Send Us a Message
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
-                    <Input placeholder="John" className="bg-slate-700 border-slate-600" />
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+                      <Input 
+                        placeholder="John" 
+                        className="bg-slate-700 border-slate-600"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+                      <Input 
+                        placeholder="Doe" 
+                        className="bg-slate-700 border-slate-600"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        required
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
-                    <Input placeholder="Doe" className="bg-slate-700 border-slate-600" />
-                  </div>
-                </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
-                    <Input type="email" placeholder="john.doe@government.gov" className="bg-slate-700 border-slate-600" />
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                      <Input 
+                        type="email" 
+                        placeholder="john.doe@government.gov" 
+                        className="bg-slate-700 border-slate-600"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+                      <Input 
+                        type="tel" 
+                        placeholder="+91 9876543210" 
+                        className="bg-slate-700 border-slate-600"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
-                    <Input type="tel" placeholder="+1 (555) 123-4567" className="bg-slate-700 border-slate-600" />
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Organization</label>
+                      <Input 
+                        placeholder="Government Agency" 
+                        className="bg-slate-700 border-slate-600"
+                        value={formData.organization}
+                        onChange={(e) => handleInputChange('organization', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Inquiry Type</label>
+                      <Select onValueChange={(value) => handleInputChange('inquiryType', value)}>
+                        <SelectTrigger className="bg-slate-700 border-slate-600">
+                          <SelectValue placeholder="Select inquiry type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sales">Sales Inquiry</SelectItem>
+                          <SelectItem value="support">Technical Support</SelectItem>
+                          <SelectItem value="demo">Request Demo</SelectItem>
+                          <SelectItem value="partnership">Partnership</SelectItem>
+                          <SelectItem value="security">Security Questions</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Organization</label>
-                    <Input placeholder="Government Agency" className="bg-slate-700 border-slate-600" />
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Message</label>
+                    <Textarea 
+                      placeholder="Tell us about your requirements and how we can help..."
+                      className="bg-slate-700 border-slate-600 min-h-32"
+                      value={formData.message}
+                      onChange={(e) => handleInputChange('message', e.target.value)}
+                      required
+                    />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Inquiry Type</label>
-                    <Select>
-                      <SelectTrigger className="bg-slate-700 border-slate-600">
-                        <SelectValue placeholder="Select inquiry type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="sales">Sales Inquiry</SelectItem>
-                        <SelectItem value="support">Technical Support</SelectItem>
-                        <SelectItem value="demo">Request Demo</SelectItem>
-                        <SelectItem value="partnership">Partnership</SelectItem>
-                        <SelectItem value="security">Security Questions</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
+
+                  <div className="flex items-center space-x-2">
+                    <input type="checkbox" className="rounded border-gray-600" required />
+                    <label className="text-sm text-gray-300">
+                      I agree to receive communications from DroneGov and understand that I can unsubscribe at any time.
+                    </label>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Message</label>
-                  <Textarea 
-                    placeholder="Tell us about your requirements and how we can help..."
-                    className="bg-slate-700 border-slate-600 min-h-32"
-                  />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" className="rounded border-gray-600" />
-                  <label className="text-sm text-gray-300">
-                    I agree to receive communications from DroneGov and understand that I can unsubscribe at any time.
-                  </label>
-                </div>
-
-                <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
-                  <Send className="w-4 h-4 mr-2" />
-                  Send Message
-                </Button>
+                  <Button 
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Message
+                      </>
+                    )}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
 
-            {/* Office Locations */}
+            {/* Office Locations and Map */}
             <div className="space-y-6">
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardHeader>
@@ -197,10 +309,45 @@ const Contact = () => {
                           {office.type}
                         </span>
                       </div>
-                      <p className="text-gray-300 text-sm mb-1">{office.address}</p>
-                      <p className="text-gray-400 text-sm">{office.phone}</p>
+                      <p className="text-gray-300 text-sm mb-2">{office.address}</p>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">{office.phone}</span>
+                        <span className="text-blue-400">{office.email}</span>
+                      </div>
                     </div>
                   ))}
+                </CardContent>
+              </Card>
+
+              {/* T-Hub Map */}
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <MapPin className="w-5 h-5 mr-2" />
+                    Find Us at T-Hub Hyderabad
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="aspect-video rounded-lg overflow-hidden">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.6293842764157!2d78.34880631489086!3d17.444806088047267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x19688beb557fa0ee!2sT-Hub!5e0!3m2!1sen!2sin!4v1640995200000!5m2!1sen!2sin"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="rounded-lg"
+                    ></iframe>
+                  </div>
+                  <div className="mt-4 p-3 bg-slate-700/30 rounded-lg">
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">Address:</strong> T-Hub, IIIT-H Campus, Gachibowli, Hyderabad, Telangana 500081
+                    </p>
+                    <p className="text-sm text-gray-300 mt-1">
+                      <strong className="text-white">Landmarks:</strong> Near IIIT Hyderabad, Gachibowli Metro Station
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -212,13 +359,14 @@ const Contact = () => {
                   <div className="space-y-4">
                     <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
                       <h3 className="font-semibold text-red-300 mb-2">24/7 Emergency Line</h3>
-                      <p className="text-red-200 text-lg font-bold">+1 (555) 911-DRONE</p>
+                      <p className="text-red-200 text-lg font-bold">+91 8978993018</p>
                       <p className="text-red-200 text-sm">For critical system failures and emergency support</p>
                     </div>
                     
                     <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                       <h3 className="font-semibold text-yellow-300 mb-2">Priority Support</h3>
                       <p className="text-yellow-200">Available for enterprise customers with SLA agreements</p>
+                      <p className="text-yellow-200 text-sm">Email: chandrapardhup@gmail.com</p>
                     </div>
                   </div>
                 </CardContent>

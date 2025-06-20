@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,8 +8,106 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Download, Calendar, Filter, Search, TrendingUp, AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Reports = () => {
+  const [isGenerating, setIsGenerating] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleGenerateReport = async (reportType: string, templateName?: string) => {
+    const reportId = templateName || reportType;
+    setIsGenerating(reportId);
+
+    try {
+      // Simulate report generation
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Create a mock PDF
+      const pdfContent = `
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+>>
+endobj
+
+4 0 obj
+<<
+/Length 120
+>>
+stream
+BT
+/F1 12 Tf
+72 720 Td
+(${templateName || reportType} Report - Telangana Operations) Tj
+0 -20 Td
+(Generated on: ${new Date().toLocaleDateString()}) Tj
+0 -20 Td
+(DroneGov Management Platform) Tj
+ET
+endstream
+endobj
+
+xref
+0 5
+0000000000 65535 f 
+0000000010 00000 n 
+0000000053 00000 n 
+0000000125 00000 n 
+0000000185 00000 n 
+trailer
+<<
+/Size 5
+/Root 1 0 R
+>>
+startxref
+350
+%%EOF`;
+
+      const blob = new Blob([pdfContent], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${templateName || reportType}-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Report Generated Successfully!",
+        description: `${templateName || reportType} report has been generated and downloaded.`,
+      });
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate report. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(null);
+    }
+  };
+
   const reports = [
     {
       id: "RPT-001",
@@ -60,7 +159,7 @@ const Reports = () => {
   const templates = [
     {
       name: "Daily Operations Report",
-      description: "Comprehensive daily summary of all drone operations and activities",
+      description: "Comprehensive daily summary of all drone operations and activities across Telangana",
       frequency: "Daily",
       category: "Operations"
     },
@@ -72,7 +171,7 @@ const Reports = () => {
     },
     {
       name: "Monthly Environmental Impact",
-      description: "Environmental monitoring results and impact assessment", 
+      description: "Environmental monitoring results and impact assessment for Telangana regions", 
       frequency: "Monthly",
       category: "Environmental"
     },
@@ -99,7 +198,7 @@ const Reports = () => {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-4">Reports & Analytics</h1>
-            <p className="text-gray-300 text-lg">Generate and manage comprehensive operational reports</p>
+            <p className="text-gray-300 text-lg">Generate and manage comprehensive operational reports for Telangana operations</p>
           </div>
 
           {/* Quick Stats */}
@@ -216,8 +315,17 @@ const Reports = () => {
                           </Badge>
                           
                           {report.status === 'Generated' && (
-                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                              <Download className="w-4 h-4 mr-1" />
+                            <Button 
+                              size="sm" 
+                              className="bg-blue-600 hover:bg-blue-700"
+                              onClick={() => handleGenerateReport(report.title)}
+                              disabled={isGenerating === report.title}
+                            >
+                              {isGenerating === report.title ? (
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1"></div>
+                              ) : (
+                                <Download className="w-4 h-4 mr-1" />
+                              )}
                               Download
                             </Button>
                           )}
@@ -251,7 +359,15 @@ const Reports = () => {
                           <Button size="sm" variant="outline" className="border-gray-600">
                             Edit
                           </Button>
-                          <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                          <Button 
+                            size="sm" 
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={() => handleGenerateReport(template.category, template.name)}
+                            disabled={isGenerating === template.name}
+                          >
+                            {isGenerating === template.name ? (
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1"></div>
+                            ) : null}
                             Generate
                           </Button>
                         </div>
@@ -344,8 +460,19 @@ const Reports = () => {
                     <Button variant="outline" className="border-gray-600">
                       Save as Template
                     </Button>
-                    <Button className="bg-blue-600 hover:bg-blue-700">
-                      Generate Report
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={() => handleGenerateReport("Custom Report")}
+                      disabled={isGenerating === "Custom Report"}
+                    >
+                      {isGenerating === "Custom Report" ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                          Generating...
+                        </>
+                      ) : (
+                        "Generate Report"
+                      )}
                     </Button>
                   </div>
                 </CardContent>

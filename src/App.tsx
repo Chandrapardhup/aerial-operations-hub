@@ -13,6 +13,10 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+import LearnMore from "./pages/LearnMore";
+import OptimizeOperations from "./pages/OptimizeOperations";
+import RealTimeAnalytics from "./pages/RealTimeAnalytics";
+import AutomatedReports from "./pages/AutomatedReports";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +35,10 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/learn-more" element={<LearnMore />} />
+          <Route path="/optimize-operations" element={<OptimizeOperations />} />
+          <Route path="/real-time-analytics" element={<RealTimeAnalytics />} />
+          <Route path="/automated-reports" element={<AutomatedReports />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
