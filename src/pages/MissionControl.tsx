@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { MissionPlannerLauncher } from "@/components/MissionPlannerLauncher";
+import { MissionPlannerConnection } from "@/components/MissionPlannerConnection";
 import { DroneSelector } from "@/components/DroneSelector";
 import { MissionStatus } from "@/components/MissionStatus";
 import { FlightControls } from "@/components/FlightControls";
 import { AIChatInterface } from "@/components/AIChatInterface";
 import { TelemetryDisplay } from "@/components/TelemetryDisplay";
+import { missionPlannerService } from "@/services/missionPlannerService";
 
 const MissionControl = () => {
   const [selectedDrone, setSelectedDrone] = useState("");
@@ -15,12 +17,12 @@ const MissionControl = () => {
   const [chatMessage, setChatMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<Array<{role: string, message: string, timestamp: string}>>([]);
   const [realtimeData, setRealtimeData] = useState({
-    altitude: 120,
-    speed: 15,
-    battery: 85,
-    gpsLat: 17.3850,
-    gpsLon: 78.4867,
-    status: "Flying"
+    altitude: 0,
+    speed: 0,
+    battery: 0,
+    gpsLat: 0,
+    gpsLon: 0,
+    status: "Disconnected"
   });
   const { toast } = useToast();
 
@@ -31,50 +33,46 @@ const MissionControl = () => {
     { id: "DRN-004", name: "Karimnagar-Delta", status: "Active", battery: 78 },
   ];
 
-  // Simulate real-time updates from Mission Planner
+  // Listen for real telemetry from Mission Planner
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (missionPlannerConnected && selectedDrone) {
-        setRealtimeData(prev => ({
-          ...prev,
-          altitude: prev.altitude + (Math.random() - 0.5) * 10,
-          speed: Math.max(0, prev.speed + (Math.random() - 0.5) * 5),
-          battery: Math.max(0, prev.battery - 0.1),
-          gpsLat: prev.gpsLat + (Math.random() - 0.5) * 0.001,
-          gpsLon: prev.gpsLon + (Math.random() - 0.5) * 0.001,
-        }));
-      }
-    }, 2000);
+    const handleTelemetry = (telemetryData: any) => {
+      console.log('Received telemetry:', telemetryData);
+      setRealtimeData({
+        altitude: telemetryData.altitude || 0,
+        speed: telemetryData.groundspeed || 0,
+        battery: telemetryData.battery_remaining || 0,
+        gpsLat: telemetryData.lat || 0,
+        gpsLon: telemetryData.lon || 0,
+        status: telemetryData.mode || "Unknown"
+      });
+    };
 
-    return () => clearInterval(interval);
-  }, [missionPlannerConnected, selectedDrone]);
+    const handleStatus = (statusData: any) => {
+      console.log('Received status:', statusData);
+      setRealtimeData(prev => ({
+        ...prev,
+        status: statusData.mode || statusData.status || "Unknown"
+      }));
+    };
+
+    const handleHeartbeat = (heartbeatData: any) => {
+      console.log('Heartbeat received:', heartbeatData);
+      // Update connection status based on heartbeat
+    };
+
+    missionPlannerService.on('telemetry', handleTelemetry);
+    missionPlannerService.on('status', handleStatus);
+    missionPlannerService.on('heartbeat', handleHeartbeat);
+
+    return () => {
+      missionPlannerService.off('telemetry', handleTelemetry);
+      missionPlannerService.off('status', handleStatus);
+      missionPlannerService.off('heartbeat', handleHeartbeat);
+    };
+  }, []);
 
   const handleControlCommand = async (command: string) => {
-    if (!selectedDrone) {
-      toast({
-        title: "No Drone Selected",
-        description: "Please select a drone first",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!missionPlannerConnected) {
-      toast({
-        title: "Mission Planner Not Connected",
-        description: "Please connect to Mission Planner first",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Send command to Mission Planner
-    toast({
-      title: `Command Executed: ${command}`,
-      description: `Sending ${command} command to ${selectedDrone}`,
-    });
-
-    console.log(`Executing command: ${command} for drone ${selectedDrone}`);
+    console.log(`Real command executed: ${command} for drone ${selectedDrone}`);
   };
 
   const handleAIChat = async () => {
@@ -95,22 +93,41 @@ const MissionControl = () => {
 
     setChatHistory(prev => [...prev, userMessage]);
 
-    // Simulate AI processing and command generation
+    // AI processing for real Mission Planner commands
     const aiResponse = {
       role: "assistant", 
-      message: `Processing command: "${chatMessage}". ${selectedDrone ? `Sending instructions to drone ${selectedDrone}` : 'Please select a drone first'}.`,
+      message: `Processing command: "${chatMessage}". ${selectedDrone && missionPlannerConnected ? `Sending MAVLink commands to drone ${selectedDrone} via Mission Planner` : 'Please ensure drone is selected and Mission Planner is connected'}.`,
       timestamp: new Date().toLocaleTimeString()
     };
 
     setChatHistory(prev => [...prev, aiResponse]);
     setChatMessage("");
 
-    // Send command to Mission Planner based on AI interpretation
+    // Parse AI command and send to Mission Planner
     if (selectedDrone && missionPlannerConnected) {
-      toast({
-        title: "AI Command Processed",
-        description: `AI interpreted your request and sent commands to Mission Planner`,
-      });
+      try {
+        // Simple command parsing - in a real implementation, you'd use more sophisticated NLP
+        const lowerMessage = chatMessage.toLowerCase();
+        
+        if (lowerMessage.includes('takeoff') || lowerMessage.includes('take off')) {
+          await missionPlannerService.sendMAVLinkCommand("COMMAND_LONG", 1, 1, { command: 22, param7: 10 });
+        } else if (lowerMessage.includes('land')) {
+          await missionPlannerService.sendMAVLinkCommand("COMMAND_LONG", 1, 1, { command: 21 });
+        } else if (lowerMessage.includes('return') || lowerMessage.includes('home')) {
+          await missionPlannerService.sendMAVLinkCommand("COMMAND_LONG", 1, 1, { command: 20 });
+        }
+        
+        toast({
+          title: "AI Command Processed",
+          description: `AI interpreted your request and sent commands to Mission Planner`,
+        });
+      } catch (error) {
+        toast({
+          title: "Command Failed",
+          description: "Failed to send AI-generated command to Mission Planner",
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -123,12 +140,17 @@ const MissionControl = () => {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-4">Mission Control Center</h1>
-            <p className="text-gray-300 text-lg">Real-time drone control and mission planning interface</p>
+            <p className="text-gray-300 text-lg">Real-time drone control with Mission Planner integration</p>
           </div>
 
-          {/* Mission Planner Launcher and Drone Selection */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <MissionPlannerLauncher />
+          {/* Mission Planner Connection and Status */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <MissionPlannerLauncher onConnectionChange={setMissionPlannerConnected} />
+            <MissionPlannerConnection onConnectionChange={setMissionPlannerConnected} />
+          </div>
+
+          {/* Drone Selection and Mission Status */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
             <DroneSelector 
               selectedDrone={selectedDrone}
               onDroneChange={setSelectedDrone}
@@ -139,7 +161,11 @@ const MissionControl = () => {
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Control Panel */}
-            <FlightControls onControlCommand={handleControlCommand} />
+            <FlightControls 
+              onControlCommand={handleControlCommand}
+              selectedDrone={selectedDrone}
+              isConnected={missionPlannerConnected}
+            />
 
             {/* AI Chat Interface */}
             <AIChatInterface 
