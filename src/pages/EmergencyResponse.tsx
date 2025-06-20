@@ -1,33 +1,45 @@
-
 import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { AlertTriangle, Phone, MapPin, Clock, Zap, Users, Shield, Camera } from "lucide-react";
+import { AlertTriangle, Phone, MapPin, Clock, Zap, Users, Shield, Camera, Play } from "lucide-react";
 
 const EmergencyResponse = () => {
   const [activeIncidents, setActiveIncidents] = useState([
     {
-      id: "INC-001",
-      type: "Fire Emergency",
-      location: "Sector 7, Gachibowli",
-      severity: "Critical",
-      reportedAt: "2 minutes ago",
+      id: "INC-2024-004",
+      type: "Building Fire",
+      location: "Mehdipatnam, Hyderabad",
+      severity: "Critical", 
+      reportedAt: "15 minutes ago",
       status: "Responding",
-      dronesAssigned: 3,
-      estimatedArrival: "5 minutes"
+      dronesAssigned: 4,
+      estimatedArrival: "2 minutes",
+      description: "High-rise residential building fire on 8th floor"
     },
     {
-      id: "INC-002", 
-      type: "Medical Emergency",
-      location: "HITEC City Metro",
+      id: "INC-2024-005",
+      type: "Road Accident",
+      location: "Outer Ring Road, Shamshabad",
       severity: "High",
-      reportedAt: "8 minutes ago",
+      reportedAt: "22 minutes ago", 
       status: "En Route",
       dronesAssigned: 2,
-      estimatedArrival: "3 minutes"
+      estimatedArrival: "4 minutes",
+      description: "Multi-vehicle collision near airport exit"
+    },
+    {
+      id: "INC-2024-006",
+      type: "Missing Person",
+      location: "KBR Park, Banjara Hills",
+      severity: "Medium",
+      reportedAt: "1 hour ago",
+      status: "Searching",
+      dronesAssigned: 3,
+      estimatedArrival: "Ongoing",
+      description: "Elderly person reported missing during morning walk"
     }
   ]);
 
@@ -94,7 +106,7 @@ const EmergencyResponse = () => {
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
                   <AlertTriangle className="w-5 h-5 mr-2 text-red-400" />
-                  Active Emergency Incidents
+                  Live Emergency Incidents
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -105,7 +117,9 @@ const EmergencyResponse = () => {
                         <Badge className={`${
                           incident.severity === 'Critical' 
                             ? 'bg-red-500/20 text-red-300 border-red-500/30'
-                            : 'bg-orange-500/20 text-orange-300 border-orange-500/30'
+                            : incident.severity === 'High'
+                            ? 'bg-orange-500/20 text-orange-300 border-orange-500/30'
+                            : 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
                         }`}>
                           {incident.severity}
                         </Badge>
@@ -115,6 +129,8 @@ const EmergencyResponse = () => {
                         {incident.status}
                       </Badge>
                     </div>
+                    
+                    <div className="text-sm text-gray-300 mb-2">{incident.description}</div>
                     
                     <div className="grid md:grid-cols-4 gap-4 text-sm">
                       <div>
@@ -140,7 +156,7 @@ const EmergencyResponse = () => {
             </Card>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-8 mb-8">
             {/* Emergency Protocols */}
             <div className="lg:col-span-2">
               <Card className="bg-slate-800/50 border-slate-700">
@@ -251,6 +267,33 @@ const EmergencyResponse = () => {
               </Card>
             </div>
           </div>
+
+          {/* Emergency Training Video */}
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <Play className="w-5 h-5 mr-2 text-red-400" />
+                Emergency Response Training
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="aspect-video bg-slate-700 rounded-lg overflow-hidden">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/K2qGNqIgQxY"
+                  title="Emergency Response Drone Operations"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <p className="text-gray-300 text-sm mt-3">
+                Advanced training for emergency response using drone technology for search and rescue operations.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

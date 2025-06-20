@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Settings } from "lucide-react";
+import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Settings, Play } from "lucide-react";
 
 const Dashboard = () => {
   const [activeDrones, setActiveDrones] = useState(12);
@@ -23,6 +23,33 @@ const Dashboard = () => {
     { id: "OP-001", type: "Waste Collection", status: "Completed", time: "2 hours ago", efficiency: "98%" },
     { id: "OP-002", type: "Environmental Scan", status: "In Progress", time: "Started 30 min ago", efficiency: "92%" },
     { id: "OP-003", type: "Route Optimization", status: "Completed", time: "4 hours ago", efficiency: "95%" },
+  ];
+
+  const realIncidents = [
+    {
+      id: "INC-2024-001",
+      type: "Landfill Fire",
+      location: "Jawaharnagar, Hyderabad",
+      status: "Resolved",
+      description: "Emergency response to landfill fire using thermal imaging drones",
+      timestamp: "Jan 15, 2024 - 14:30"
+    },
+    {
+      id: "INC-2024-002", 
+      type: "Flood Assessment",
+      location: "Warangal Urban",
+      status: "Monitoring",
+      description: "Ongoing flood impact assessment and rescue coordination",
+      timestamp: "Jan 18, 2024 - 09:15"
+    },
+    {
+      id: "INC-2024-003",
+      type: "Traffic Congestion",
+      location: "HITEC City, Hyderabad",
+      status: "Active",
+      description: "Real-time traffic monitoring and signal optimization",
+      timestamp: "Jan 20, 2024 - 08:45"
+    }
   ];
 
   return (
@@ -84,7 +111,7 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8 mb-8">
             {/* Drone Status */}
             <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader>
@@ -153,6 +180,70 @@ const Dashboard = () => {
             </Card>
           </div>
 
+          {/* Real Incidents Section */}
+          <div className="mb-8">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <AlertTriangle className="w-5 h-5 mr-2 text-red-400" />
+                  Live Incident Reports
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {realIncidents.map((incident) => (
+                  <div key={incident.id} className="p-4 bg-slate-700/30 rounded-lg border border-slate-600">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-3">
+                        <Badge className={`${
+                          incident.status === 'Resolved' 
+                            ? 'bg-green-500/20 text-green-300 border-green-500/30'
+                            : incident.status === 'Active'
+                            ? 'bg-red-500/20 text-red-300 border-red-500/30'
+                            : 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
+                        }`}>
+                          {incident.status}
+                        </Badge>
+                        <span className="font-semibold text-white">{incident.type}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">{incident.timestamp}</span>
+                    </div>
+                    <div className="text-sm text-gray-300 mb-1">{incident.location}</div>
+                    <div className="text-sm text-gray-400">{incident.description}</div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* YouTube Training Video */}
+          <div className="mb-8">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <Play className="w-5 h-5 mr-2 text-red-400" />
+                  Drone Operations Training
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="aspect-video bg-slate-700 rounded-lg overflow-hidden">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    title="Drone Operations Training Video"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+                <p className="text-gray-300 text-sm mt-3">
+                  Learn the fundamentals of drone operations and safety protocols for government missions.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Quick Actions */}
           <div className="mt-8">
             <Card className="bg-slate-800/50 border-slate-700">
@@ -161,17 +252,17 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-5 gap-4">
-                  <Link to="/deploy-drone">
+                  <Link to="/drone-control">
                     <Button className="w-full bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all duration-300">
                       Deploy Drone
                     </Button>
                   </Link>
-                  <Link to="/start-mission">
+                  <Link to="/custom-mission">
                     <Button className="w-full bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all duration-300">
                       Start Mission
                     </Button>
                   </Link>
-                  <Link to="/generate-report">
+                  <Link to="/reports">
                     <Button className="w-full bg-purple-600 hover:bg-purple-700 transform hover:scale-105 transition-all duration-300">
                       Generate Report
                     </Button>
@@ -182,7 +273,7 @@ const Dashboard = () => {
                       Mission Control
                     </Button>
                   </Link>
-                  <Link to="/emergency-stop">
+                  <Link to="/emergency-response">
                     <Button className="w-full bg-red-600 hover:bg-red-700 transform hover:scale-105 transition-all duration-300">
                       Emergency Stop
                     </Button>

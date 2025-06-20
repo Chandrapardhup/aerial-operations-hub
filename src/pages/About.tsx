@@ -2,7 +2,7 @@
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Users, Zap, Award, MapPin, Clock } from "lucide-react";
+import { Shield, Zap, Award, MapPin, Clock } from "lucide-react";
 
 const About = () => {
   const stats = [
@@ -10,33 +10,6 @@ const About = () => {
     { icon: MapPin, label: "Districts Covered", value: "33" },
     { icon: Clock, label: "Flight Hours", value: "50,000+" },
     { icon: Award, label: "Success Rate", value: "99.2%" },
-  ];
-
-  const teamMembers = [
-    {
-      name: "Dr. Rajesh Kumar",
-      role: "Director of Drone Operations",
-      department: "Technology & Innovation",
-      image: "/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png"
-    },
-    {
-      name: "Priya Sharma",
-      role: "Chief Technology Officer", 
-      department: "IT & Digital Services",
-      image: "/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png"
-    },
-    {
-      name: "Suresh Reddy",
-      role: "Operations Manager",
-      department: "Municipal Administration",
-      image: "/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png"
-    },
-    {
-      name: "Anitha Rao",
-      role: "Safety & Compliance Head",
-      department: "Regulatory Affairs",
-      image: "/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png"
-    }
   ];
 
   return (
@@ -58,14 +31,14 @@ const About = () => {
             <Card className="bg-slate-800/50 border-slate-700 overflow-hidden">
               <div className="relative h-96">
                 <img 
-                  src="/lovable-uploads/fb9d08aa-ef94-4acd-85e5-cecbd156b7f8.png" 
-                  alt="Advanced drone technology for government operations" 
+                  src="/lovable-uploads/356f28c4-801c-47eb-9d80-c7da06a3dff3.png" 
+                  alt="Advanced drone technology for waste management and environmental monitoring" 
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end">
                   <div className="p-8">
-                    <h2 className="text-3xl font-bold text-white mb-2">Innovative Drone Solutions</h2>
-                    <p className="text-gray-300">Empowering smart governance through cutting-edge aerial technology</p>
+                    <h2 className="text-3xl font-bold text-white mb-2">Waste Management & Environmental Monitoring</h2>
+                    <p className="text-gray-300">Deploying advanced aerial technology for cleaner and smarter cities</p>
                   </div>
                 </div>
               </div>
@@ -148,30 +121,48 @@ const About = () => {
             </Card>
           </div>
 
-          {/* Team */}
+          {/* Real Incidents Section */}
           <Card className="bg-slate-800/50 border-slate-700">
             <CardHeader>
               <CardTitle className="text-white flex items-center">
-                <Users className="w-6 h-6 mr-3 text-green-400" />
-                Leadership Team
+                <Award className="w-6 h-6 mr-3 text-green-400" />
+                Recent Success Stories
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {teamMembers.map((member, index) => (
-                  <div key={index} className="text-center group">
-                    <div className="relative mb-4">
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-slate-600 group-hover:border-blue-400 transition-colors duration-300"
-                      />
-                    </div>
-                    <h3 className="text-white font-semibold mb-1">{member.name}</h3>
-                    <p className="text-blue-400 text-sm mb-1">{member.role}</p>
-                    <p className="text-gray-400 text-xs">{member.department}</p>
-                  </div>
-                ))}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="p-4 bg-slate-700/30 rounded-lg">
+                  <h3 className="text-white font-semibold mb-2">Landfill Fire Response - Hyderabad</h3>
+                  <p className="text-gray-300 text-sm mb-3">
+                    Deployed 4 drones within 3 minutes to assess and monitor the Jawaharnagar landfill fire in December 2023, 
+                    providing real-time thermal imaging to firefighters and reducing response time by 40%.
+                  </p>
+                  <Badge className="bg-red-500/20 text-red-300 border-red-500/30">Emergency Response</Badge>
+                </div>
+                <div className="p-4 bg-slate-700/30 rounded-lg">
+                  <h3 className="text-white font-semibold mb-2">Flood Assessment - Warangal</h3>
+                  <p className="text-gray-300 text-sm mb-3">
+                    During monsoon floods in July 2023, drones mapped affected areas covering 150 sq km, 
+                    helping authorities prioritize rescue operations and distribute relief materials efficiently.
+                  </p>
+                  <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">Disaster Management</Badge>
+                </div>
+                <div className="p-4 bg-slate-700/30 rounded-lg">
+                  <h3 className="text-white font-semibold mb-2">Agricultural Survey - Nizamabad</h3>
+                  <p className="text-gray-300 text-sm mb-3">
+                    Completed crop damage assessment across 500 villages in 48 hours using drone technology, 
+                    enabling rapid insurance claim processing for farmers affected by unexpected hailstorms.
+                  </p>
+                  <Badge className="bg-green-500/20 text-green-300 border-green-500/30">Agriculture</Badge>
+                </div>
+                <div className="p-4 bg-slate-700/30 rounded-lg">
+                  <h3 className="text-white font-semibold mb-2">Traffic Management - HITEC City</h3>
+                  <p className="text-gray-300 text-sm mb-3">
+                    Live traffic monitoring during IT corridor peak hours reduced congestion by 25% through 
+                    real-time signal optimization and alternative route suggestions to commuters.
+                  </p>
+                  <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30">Traffic Control</Badge>
+                </div>
               </div>
             </CardContent>
           </Card>
