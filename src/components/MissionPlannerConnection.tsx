@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Wifi, WifiOff } from "lucide-react";
+import { Settings, Wifi, WifiOff, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { missionPlannerService } from "@/services/missionPlannerService";
 
@@ -41,15 +41,16 @@ export const MissionPlannerConnection = ({ onConnectionChange }: MissionPlannerC
       onConnectionChange(true);
       
       toast({
-        title: "Connected to Mission Planner",
-        description: `Successfully connected via ${connectionType}`,
+        title: "Connected to Ground Control Station",
+        description: `Successfully connected via ${connectionType} - Real-time updates active`,
       });
     } catch (error) {
       console.error('Connection failed:', error);
       toast({
         title: "Connection Failed",
-        description: "Could not connect to Mission Planner. Make sure it's running and WebSocket is enabled.",
-        variant: "destructive"
+        description: "Could not connect to Mission Planner. Make sure it's running and WebSocket is enabled on port 8080.",
+        variant: "destructive",
+        duration: 8000
       });
     } finally {
       setIsConnecting(false);
@@ -63,7 +64,7 @@ export const MissionPlannerConnection = ({ onConnectionChange }: MissionPlannerC
     
     toast({
       title: "Disconnected",
-      description: "Disconnected from Mission Planner",
+      description: "Disconnected from external ground control station",
     });
   };
 
@@ -72,12 +73,12 @@ export const MissionPlannerConnection = ({ onConnectionChange }: MissionPlannerC
       <CardHeader>
         <CardTitle className="text-white flex items-center">
           <Settings className="w-5 h-5 mr-2" />
-          Mission Planner Connection
+          External Ground Control Connection
           <Badge className={`ml-auto ${isConnected ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
             {isConnected ? (
               <>
                 <Wifi className="w-3 h-3 mr-1" />
-                Connected
+                Connected & Live
               </>
             ) : (
               <>
@@ -97,7 +98,7 @@ export const MissionPlannerConnection = ({ onConnectionChange }: MissionPlannerC
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-slate-700 border-slate-600">
-                <SelectItem value="TCP" className="text-white hover:bg-slate-600">TCP</SelectItem>
+                <SelectItem value="TCP" className="text-white hover:bg-slate-600">TCP (Recommended)</SelectItem>
                 <SelectItem value="UDP" className="text-white hover:bg-slate-600">UDP</SelectItem>
                 <SelectItem value="Serial" className="text-white hover:bg-slate-600">Serial</SelectItem>
               </SelectContent>
@@ -107,17 +108,17 @@ export const MissionPlannerConnection = ({ onConnectionChange }: MissionPlannerC
           {connectionType !== 'Serial' ? (
             <>
               <div>
-                <Label htmlFor="host" className="text-gray-300">Host</Label>
+                <Label htmlFor="host" className="text-gray-300">Host/IP Address</Label>
                 <Input
                   id="host"
                   value={host}
                   onChange={(e) => setHost(e.target.value)}
                   className="bg-slate-700 border-slate-600 text-white"
-                  placeholder="127.0.0.1"
+                  placeholder="127.0.0.1 or remote IP"
                 />
               </div>
               <div>
-                <Label htmlFor="port" className="text-gray-300">Port</Label>
+                <Label htmlFor="port" className="text-gray-300">WebSocket Port</Label>
                 <Input
                   id="port"
                   value={port}
@@ -163,7 +164,7 @@ export const MissionPlannerConnection = ({ onConnectionChange }: MissionPlannerC
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               disabled={isConnecting}
             >
-              {isConnecting ? 'Connecting...' : 'Connect to Mission Planner'}
+              {isConnecting ? 'Connecting...' : 'Connect to External GCS'}
             </Button>
           ) : (
             <Button 
@@ -176,11 +177,11 @@ export const MissionPlannerConnection = ({ onConnectionChange }: MissionPlannerC
         </div>
 
         <div className="text-sm text-gray-400">
-          <p><strong>Setup Instructions:</strong></p>
-          <p>1. Open Mission Planner on your computer</p>
-          <p>2. Go to Config/Tuning → Planner → Enable "WebSocket Server"</p>
-          <p>3. Set WebSocket port to 8080 (default)</p>
-          <p>4. Connect your drone to Mission Planner first</p>
+          <p><strong>External Connection Options:</strong></p>
+          <p className="text-xs">• Local: Connect to Mission Planner on this computer</p>
+          <p className="text-xs">• Remote: Connect to external ground control station</p>
+          <p className="text-xs">• Real-time telemetry and control capabilities</p>
+          <p className="text-xs">• Ensure WebSocket server is enabled and accessible</p>
         </div>
       </CardContent>
     </Card>

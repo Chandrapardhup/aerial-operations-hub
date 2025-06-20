@@ -14,6 +14,7 @@ export const Navigation = () => {
     { name: "Operations", href: "/operations", icon: Settings },
     { name: "Analytics", href: "/analytics", icon: BarChart3 },
     { name: "Reports", href: "/reports", icon: FileText },
+    { name: "Mission Control", href: "/mission-control", icon: Settings },
     { name: "About", href: "/about", icon: Users },
     { name: "Contact", href: "/contact", icon: Phone },
   ];
@@ -23,10 +24,17 @@ export const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-              <Settings className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 p-1">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Telangana_Emblem.svg/200px-Telangana_Emblem.svg.png" 
+                alt="Telangana Government Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
-            <span className="text-xl font-bold text-white">DroneGov</span>
+            <div className="flex flex-col">
+              <span className="text-xl font-bold text-white">Telangana DroneGov</span>
+              <span className="text-xs text-gray-300">Government of Telangana</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -52,11 +60,7 @@ export const Navigation = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-3">
-            <Link to="/signup">
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
-                Sign Up
-              </Button>
-            </Link>
+            <span className="text-sm text-gray-300">Official Government Portal</span>
           </div>
 
           {/* Mobile menu button */}
@@ -91,13 +95,6 @@ export const Navigation = () => {
                   </Link>
                 );
               })}
-              <div className="pt-4 border-t border-slate-700">
-                <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
             </div>
           </div>
         )}

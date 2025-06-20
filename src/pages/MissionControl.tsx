@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
-import { MissionPlannerLauncher } from "@/components/MissionPlannerLauncher";
+import { MissionPlannerDownload } from "@/components/MissionPlannerDownload";
 import { MissionPlannerConnection } from "@/components/MissionPlannerConnection";
-import { LocalServerSetup } from "@/components/LocalServerSetup";
 import { DroneSelector } from "@/components/DroneSelector";
 import { MissionStatus } from "@/components/MissionStatus";
 import { FlightControls } from "@/components/FlightControls";
@@ -27,16 +26,16 @@ const MissionControl = () => {
   const { toast } = useToast();
 
   const drones = [
-    { id: "DRN-001", name: "Hyderabad-Alpha", status: "Active", battery: 85 },
-    { id: "DRN-002", name: "Warangal-Beta", status: "Active", battery: 92 },
-    { id: "DRN-003", name: "Nizamabad-Gamma", status: "Standby", battery: 45 },
-    { id: "DRN-004", name: "Karimnagar-Delta", status: "Active", battery: 78 },
+    { id: "TG-DRN-001", name: "Hyderabad-Alpha", status: "Active", battery: 85 },
+    { id: "TG-DRN-002", name: "Warangal-Beta", status: "Active", battery: 92 },
+    { id: "TG-DRN-003", name: "Nizamabad-Gamma", status: "Standby", battery: 45 },
+    { id: "TG-DRN-004", name: "Karimnagar-Delta", status: "Active", battery: 78 },
   ];
 
   // Listen for real telemetry from Mission Planner
   useEffect(() => {
     const handleTelemetry = (telemetryData: any) => {
-      console.log('Received telemetry:', telemetryData);
+      console.log('Real-time telemetry received:', telemetryData);
       setRealtimeData({
         altitude: telemetryData.altitude || 0,
         speed: telemetryData.groundspeed || 0,
@@ -48,7 +47,7 @@ const MissionControl = () => {
     };
 
     const handleStatus = (statusData: any) => {
-      console.log('Received status:', statusData);
+      console.log('Status update received:', statusData);
       setRealtimeData(prev => ({
         ...prev,
         status: statusData.mode || statusData.status || "Unknown"
@@ -56,22 +55,66 @@ const MissionControl = () => {
     };
 
     const handleHeartbeat = (heartbeatData: any) => {
-      console.log('Heartbeat received:', heartbeatData);
+      console.log('Heartbeat received - drone is alive:', heartbeatData);
+    };
+
+    const handleConnected = () => {
+      console.log('Connected to external ground control station');
+      toast({
+        title: "Connected",
+        description: "Successfully connected to external ground control station",
+      });
+    };
+
+    const handleDisconnected = () => {
+      console.log('Disconnected from ground control station');
+      toast({
+        title: "Disconnected",
+        description: "Connection to ground control station lost",
+        variant: "destructive"
+      });
     };
 
     missionPlannerService.on('telemetry', handleTelemetry);
     missionPlannerService.on('status', handleStatus);
     missionPlannerService.on('heartbeat', handleHeartbeat);
+    missionPlannerService.on('connected', handleConnected);
+    missionPlannerService.on('disconnected', handleDisconnected);
 
     return () => {
       missionPlannerService.off('telemetry', handleTelemetry);
       missionPlannerService.off('status', handleStatus);
       missionPlannerService.off('heartbeat', handleHeartbeat);
+      missionPlannerService.off('connected', handleConnected);
+      missionPlannerService.off('disconnected', handleDisconnected);
     };
-  }, []);
+  }, [toast]);
 
   const handleControlCommand = async (command: string) => {
-    console.log(`Real command executed: ${command} for drone ${selectedDrone}`);
+    if (!missionPlannerConnected) {
+      toast({
+        title: "Not Connected",
+        description: "Please connect to Mission Planner first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      console.log(`Executing command: ${command} for drone ${selectedDrone}`);
+      await missionPlannerService.sendCommand(command, { droneId: selectedDrone });
+      
+      toast({
+        title: "Command Sent",
+        description: `${command} command sent to ${selectedDrone}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Command Failed",
+        description: "Failed to send command to Mission Planner",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleAIChat = async () => {
@@ -135,18 +178,13 @@ const MissionControl = () => {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4">Mission Control Center</h1>
-            <p className="text-gray-300 text-lg">Real-time drone control with Mission Planner integration</p>
+            <h1 className="text-4xl font-bold text-white mb-4">Telangana Drone Mission Control</h1>
+            <p className="text-gray-300 text-lg">Real-time drone control with external ground control station connectivity</p>
           </div>
 
-          {/* Local Server Setup */}
-          <div className="mb-8">
-            <LocalServerSetup />
-          </div>
-
-          {/* Mission Planner Connection and Status */}
+          {/* Mission Planner Download and Connection */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <MissionPlannerLauncher onConnectionChange={setMissionPlannerConnected} />
+            <MissionPlannerDownload />
             <MissionPlannerConnection onConnectionChange={setMissionPlannerConnected} />
           </div>
 

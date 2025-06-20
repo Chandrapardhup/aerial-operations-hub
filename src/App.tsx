@@ -11,7 +11,6 @@ import Analytics from "./pages/Analytics";
 import Reports from "./pages/Reports";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import LearnMore from "./pages/LearnMore";
 import OptimizeOperations from "./pages/OptimizeOperations";
@@ -35,7 +34,6 @@ const App = () => (
           <Route path="/reports" element={<Reports />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/learn-more" element={<LearnMore />} />
           <Route path="/optimize-operations" element={<OptimizeOperations />} />
           <Route path="/real-time-analytics" element={<RealTimeAnalytics />} />
