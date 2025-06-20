@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Settings, Play } from "lucide-react";
+import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Settings, BookOpen } from "lucide-react";
 
 const Dashboard = () => {
   const [activeDrones, setActiveDrones] = useState(12);
@@ -215,31 +215,39 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          {/* YouTube Training Video */}
+          {/* Training Resources */}
           <div className="mb-8">
             <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
-                  <Play className="w-5 h-5 mr-2 text-red-400" />
-                  Drone Operations Training
+                  <BookOpen className="w-5 h-5 mr-2 text-blue-400" />
+                  Drone Operations Training Resources
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-slate-700 rounded-lg overflow-hidden">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                    title="Drone Operations Training Video"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  ></iframe>
+                <div className="p-6 bg-slate-700/30 rounded-lg">
+                  <h3 className="text-xl font-semibold text-white mb-3">
+                    Learn Drone Operations & Safety Protocols
+                  </h3>
+                  <p className="text-gray-300 mb-4">
+                    Access comprehensive training materials for drone operations, safety protocols, 
+                    and government mission requirements.
+                  </p>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                      <h4 className="font-medium text-blue-300 mb-1">Safety Protocols</h4>
+                      <p className="text-sm text-blue-200">Essential safety guidelines for drone operations</p>
+                    </div>
+                    <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                      <h4 className="font-medium text-green-300 mb-1">Mission Planning</h4>
+                      <p className="text-sm text-green-200">Strategic planning for government missions</p>
+                    </div>
+                    <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                      <h4 className="font-medium text-purple-300 mb-1">Technical Operations</h4>
+                      <p className="text-sm text-purple-200">Advanced technical operational procedures</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-gray-300 text-sm mt-3">
-                  Learn the fundamentals of drone operations and safety protocols for government missions.
-                </p>
               </CardContent>
             </Card>
           </div>

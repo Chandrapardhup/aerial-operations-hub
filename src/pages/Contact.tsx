@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -128,7 +129,7 @@ const Contact = () => {
       <div className="pt-20 px-4 pb-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold text-white mb-6">Contact Telangana Aviation Department</h1>
+            <h1 className="text-5xl font-bold text-white mb-6">Contact <span className="text-white">Telangana Aviation Department</span></h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Get in touch with our aviation experts at T-Hub, Hyderabad. Official contact points for drone operations, aviation clearances, and emergency support across Telangana state.
             </p>
@@ -167,7 +168,7 @@ const Contact = () => {
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
                   <MessageSquare className="w-6 h-6 mr-2" />
-                  Contact Telangana Aviation Department
+                  Contact <span className="text-white">Telangana Aviation Department</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -261,7 +262,7 @@ const Contact = () => {
                   <div className="flex items-center space-x-2">
                     <input type="checkbox" className="rounded border-gray-600" required />
                     <label className="text-sm text-gray-300">
-                      I agree to receive communications from Telangana Aviation Department and understand government privacy policies.
+                      I agree to receive communications from <span className="text-white">Telangana Aviation Department</span> and understand government privacy policies.
                     </label>
                   </div>
 

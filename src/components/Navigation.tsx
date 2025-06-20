@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,8 +31,12 @@ export const Navigation = () => {
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <Zap className="h-8 w-8 text-blue-400" />
+            <Link to="/" className="flex items-center space-x-3">
+              <img 
+                src="/lovable-uploads/f91391b5-8192-4d00-9257-6e662e28f731.png" 
+                alt="Government of Telangana" 
+                className="h-10 w-10"
+              />
               <span className="font-bold text-xl text-white">DRONEGOV</span>
             </Link>
           </div>
