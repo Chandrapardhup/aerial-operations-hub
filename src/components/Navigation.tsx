@@ -26,13 +26,13 @@ export const Navigation = () => {
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 p-1">
               <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Telangana_Emblem.svg/200px-Telangana_Emblem.svg.png" 
+                src="/lovable-uploads/27a1feed-bd29-44a2-9a3f-80e67122c0ea.png" 
                 alt="Telangana Government Logo" 
                 className="w-full h-full object-contain"
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-white">Telangana DroneGov</span>
+              <span className="text-xl font-bold text-white">DRONEGOV</span>
               <span className="text-xs text-gray-300">Government of Telangana</span>
             </div>
           </Link>
