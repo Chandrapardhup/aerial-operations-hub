@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Plus, Drone } from "lucide-react";
+import { Plus, Plane } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const StyledDroneForm = () => {
@@ -183,7 +183,7 @@ const StyledDroneForm = () => {
             type="submit"
             className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300"
           >
-            <Drone className="w-4 h-4 mr-2" />
+            <Plane className="w-4 h-4 mr-2" />
             Add Drone to Fleet
           </Button>
         </form>
