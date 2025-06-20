@@ -1,10 +1,9 @@
-
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Download, PlayCircle, FileText, Users, Shield, Zap, Globe, BarChart3, MapPin, Eye, Drone, Wind, Clock, Battery, CheckCircle, TrendingUp } from "lucide-react";
+import { Download, PlayCircle, FileText, Users, Shield, Zap, Globe, BarChart3, MapPin, Eye, Plane, Wind, Clock, Battery, CheckCircle, TrendingUp } from "lucide-react";
 
 const LearnMore = () => {
   const handleDownloadBrochure = () => {
