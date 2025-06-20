@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,11 +9,13 @@ import WasteCollectionStatus from "@/components/WasteCollectionStatus";
 import EnvironmentalMetrics from "@/components/EnvironmentalMetrics";
 import GovernmentAlerts from "@/components/GovernmentAlerts";
 import ComplianceReporting from "@/components/ComplianceReporting";
+import { MissionPlannerLauncher } from "@/components/MissionPlannerLauncher";
 import { Link } from "react-router-dom";
 
 const Operations = () => {
   const [activeMissions, setActiveMissions] = useState(8);
   const [completedToday, setCompletedToday] = useState(24);
+  const [missionPlannerConnected, setMissionPlannerConnected] = useState(false);
 
   const drones = [
     { id: "TG-DRN-001", name: "Hyderabad-Alpha", status: "Active", battery: 85, signal: "Strong", location: "Sector A", mission: "Waste Monitoring" },
@@ -115,6 +116,11 @@ const Operations = () => {
           {/* Government Alerts Section */}
           <div className="mb-8">
             <GovernmentAlerts />
+          </div>
+
+          {/* Mission Planner Control Center */}
+          <div className="mb-8">
+            <MissionPlannerLauncher onConnectionChange={setMissionPlannerConnected} />
           </div>
 
           {/* Drone Fleet Status */}
