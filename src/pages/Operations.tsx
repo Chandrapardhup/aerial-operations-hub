@@ -10,7 +10,6 @@ import WasteCollectionStatus from "@/components/WasteCollectionStatus";
 import EnvironmentalMetrics from "@/components/EnvironmentalMetrics";
 import GovernmentAlerts from "@/components/GovernmentAlerts";
 import ComplianceReporting from "@/components/ComplianceReporting";
-import WasteManagementVideo from "@/components/WasteManagementVideo";
 
 const Operations = () => {
   const [activeMissions, setActiveMissions] = useState(8);
@@ -43,9 +42,6 @@ const Operations = () => {
             <h1 className="text-4xl font-bold text-white mb-4">Waste Management Operations</h1>
             <p className="text-gray-300 text-lg">Real-time monitoring and control of drone operations</p>
           </div>
-
-          {/* Waste Management Video */}
-          <WasteManagementVideo />
 
           {/* Stats Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

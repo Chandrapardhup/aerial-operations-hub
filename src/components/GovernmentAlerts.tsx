@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Bell, CheckCircle, Clock, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface Alert {
   id: string;
@@ -69,9 +70,16 @@ const GovernmentAlerts = () => {
   return (
     <Card className="bg-slate-800/50 border-slate-700">
       <CardHeader>
-        <CardTitle className="text-white flex items-center">
-          <Bell className="w-5 h-5 mr-2 text-red-400" />
-          Government Alerts & Notifications
+        <CardTitle className="text-white flex items-center justify-between">
+          <div className="flex items-center">
+            <Bell className="w-5 h-5 mr-2 text-red-400" />
+            Government Alerts & Notifications
+          </div>
+          <Link to="/alerts-management">
+            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+              View All
+            </Button>
+          </Link>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -110,9 +118,11 @@ const GovernmentAlerts = () => {
                     <CheckCircle className="w-4 h-4 mr-1" />
                     Acknowledge
                   </Button>
-                  <Button size="sm" variant="outline" className="border-gray-600">
-                    View Details
-                  </Button>
+                  <Link to="/alert-details">
+                    <Button size="sm" variant="outline" className="border-gray-600">
+                      View Details
+                    </Button>
+                  </Link>
                   <Button size="sm" variant="outline" className="border-red-600 text-red-400">
                     <X className="w-4 h-4 mr-1" />
                     Dismiss

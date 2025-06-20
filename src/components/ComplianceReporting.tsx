@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { FileText, Download, Calendar, CheckCircle, AlertTriangle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ComplianceReport {
   id: string;
@@ -89,9 +90,16 @@ const ComplianceReporting = () => {
   return (
     <Card className="bg-slate-800/50 border-slate-700">
       <CardHeader>
-        <CardTitle className="text-white flex items-center">
-          <FileText className="w-5 h-5 mr-2 text-blue-400" />
-          Compliance & Reporting
+        <CardTitle className="text-white flex items-center justify-between">
+          <div className="flex items-center">
+            <FileText className="w-5 h-5 mr-2 text-blue-400" />
+            Compliance & Reporting
+          </div>
+          <Link to="/compliance-management">
+            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+              View All
+            </Button>
+          </Link>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -129,10 +137,12 @@ const ComplianceReporting = () => {
               </div>
 
               <div className="flex space-x-2">
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  View Details
-                </Button>
+                <Link to="/compliance-details">
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    View Details
+                  </Button>
+                </Link>
                 <Button size="sm" variant="outline" className="border-gray-600">
                   <Download className="w-4 h-4 mr-1" />
                   Download
