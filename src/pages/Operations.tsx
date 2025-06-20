@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { MapPin, Play, Pause, Square, Settings, AlertCircle, CheckCircle } from "lucide-react";
+import { DroneCreationForm } from "@/components/DroneCreationForm";
+import { MapPin, Play, Pause, Square, Settings, AlertCircle, CheckCircle, Plus, Drone } from "lucide-react";
 
 const Operations = () => {
   const [selectedMission, setSelectedMission] = useState(null);
+  const [showDroneCreationForm, setShowDroneCreationForm] = useState(false);
 
   const activeMissions = [
     {
@@ -44,14 +46,18 @@ const Operations = () => {
     }
   ];
 
-  const droneFleet = [
+  const [droneFleet, setDroneFleet] = useState([
     { id: "DRN-001", status: "Active", mission: "MSN-001", battery: 78, location: "Grid A-4" },
     { id: "DRN-002", status: "Active", mission: "MSN-001", battery: 82, location: "Grid A-5" },
     { id: "DRN-003", status: "Active", mission: "MSN-001", battery: 65, location: "Grid A-3" },
     { id: "DRN-004", status: "Active", mission: "MSN-002", battery: 91, location: "Grid B-2" },
     { id: "DRN-005", status: "Active", mission: "MSN-002", battery: 88, location: "Grid B-7" },
     { id: "DRN-006", status: "Standby", mission: null, battery: 95, location: "Base Station" },
-  ];
+  ]);
+
+  const handleDroneCreated = (newDrone: any) => {
+    setDroneFleet(prev => [...prev, newDrone]);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
@@ -175,12 +181,26 @@ const Operations = () => {
             </TabsContent>
 
             <TabsContent value="fleet" className="space-y-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Drone Fleet Management</h2>
+                <Button 
+                  onClick={() => setShowDroneCreationForm(true)}
+                  className="bg-green-600 hover:bg-green-700 flex items-center"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New Drone
+                </Button>
+              </div>
+
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {droneFleet.map((drone) => (
                   <Card key={drone.id} className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transition-all duration-300">
                     <CardHeader>
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-white">{drone.id}</CardTitle>
+                        <CardTitle className="text-white flex items-center">
+                          <Drone className="w-5 h-5 mr-2 text-blue-400" />
+                          {drone.id}
+                        </CardTitle>
                         <Badge className={`${
                           drone.status === 'Active' 
                             ? 'bg-green-500/20 text-green-300 border-green-500/30'
@@ -269,6 +289,13 @@ const Operations = () => {
           </Tabs>
         </div>
       </div>
+
+      {showDroneCreationForm && (
+        <DroneCreationForm
+          onClose={() => setShowDroneCreationForm(false)}
+          onDroneCreated={handleDroneCreated}
+        />
+      )}
     </div>
   );
 };
