@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Play, Square, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, MessageSquare, Send, ExternalLink } from "lucide-react";
+import { MapPin, Battery, Signal, AlertTriangle, CheckCircle, Clock, Zap, Play, Square, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, MessageSquare, Send, ExternalLink, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const MissionControl = () => {
