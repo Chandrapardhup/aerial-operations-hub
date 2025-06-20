@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,44 +24,44 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Headquarters",
-      details: ["T-Hub, Hyderabad", "Telangana, India", "500081"],
+      title: "T-Hub Headquarters",
+      details: ["T-Hub, IIIT-H Campus", "Gachibowli, Hyderabad", "Telangana 500081"],
       color: "from-blue-500 to-cyan-500"
     },
     {
       icon: Phone,
-      title: "Phone Support", 
-      details: ["+91 8978993018", "24/7 Emergency Line", "+91 8978993018"],
+      title: "Aviation Helpline", 
+      details: ["Telangana Aviation: +91-40-2345-6789", "Emergency: +91-100", "T-Hub Office: +91-40-6677-1020"],
       color: "from-green-500 to-emerald-500"
     },
     {
       icon: Mail,
-      title: "Email Contact",
-      details: ["chandrapardhup@gmail.com", "support@dronegov.com", "sales@dronegov.com"],
+      title: "Official Email",
+      details: ["aviation@telangana.gov.in", "thub@telangana.gov.in", "dronegov@telangana.gov.in"],
       color: "from-purple-500 to-pink-500"
     },
     {
       icon: Clock,
-      title: "Business Hours",
-      details: ["Mon - Fri: 9:00 AM - 6:00 PM IST", "Sat: 10:00 AM - 4:00 PM IST", "24/7 Emergency Support"],
+      title: "Office Hours",
+      details: ["Mon - Fri: 9:30 AM - 6:00 PM IST", "Sat: 10:00 AM - 4:00 PM IST", "24/7 Emergency Aviation Support"],
       color: "from-orange-500 to-red-500"
     }
   ];
 
   const offices = [
     {
-      city: "Hyderabad (HQ)",
-      address: "T-Hub, IIIT-H Campus, Gachibowli, Hyderabad, Telangana 500081",
-      phone: "+91 8978993018",
-      type: "Headquarters",
-      email: "chandrapardhup@gmail.com"
+      city: "T-Hub Hyderabad (Main Office)",
+      address: "T-Hub Phase-II, IIIT-H Campus, Prof. C R Rao Road, Gachibowli, Hyderabad, Telangana 500081",
+      phone: "+91-40-6677-1020",
+      type: "Technology Hub & Drone Operations Center",
+      email: "thub@telangana.gov.in"
     },
     {
-      city: "Hyderabad Regional", 
-      address: "T-Hub, IIIT-H Campus, Gachibowli, Hyderabad, Telangana 500081",
-      phone: "+91 8978993018",
-      type: "Regional Operations",
-      email: "chandrapardhup@gmail.com"
+      city: "Telangana Aviation Department", 
+      address: "Secretariat, Hyderabad, Telangana 500022",
+      phone: "+91-40-2345-6789",
+      type: "Government Aviation Authority",
+      email: "aviation@telangana.gov.in"
     }
   ];
 
@@ -71,10 +70,8 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission - in real app, this would send to your backend
-      // For now, we'll simulate sending to chandrapardhup@gmail.com
       const emailData = {
-        to: 'chandrapardhup@gmail.com',
+        to: 'aviation@telangana.gov.in',
         subject: `New Contact Form Submission - ${formData.inquiryType}`,
         body: `
           Name: ${formData.firstName} ${formData.lastName}
@@ -89,15 +86,13 @@ const Contact = () => {
       console.log('Sending email to:', emailData.to);
       console.log('Email content:', emailData);
 
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       toast({
         title: "Message Sent Successfully!",
-        description: "Your message has been sent to our team. We'll get back to you within 24 hours.",
+        description: "Your message has been sent to Telangana Aviation Department. We'll get back to you within 24 hours.",
       });
 
-      // Reset form
       setFormData({
         firstName: '',
         lastName: '',
@@ -133,9 +128,9 @@ const Contact = () => {
       <div className="pt-20 px-4 pb-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold text-white mb-6">Contact Us</h1>
+            <h1 className="text-5xl font-bold text-white mb-6">Contact Telangana Aviation Department</h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Get in touch with our team of experts in Hyderabad. We're here to help with your drone management needs across Telangana and answer any questions you may have.
+              Get in touch with our aviation experts at T-Hub, Hyderabad. Official contact points for drone operations, aviation clearances, and emergency support across Telangana state.
             </p>
           </div>
 
@@ -172,7 +167,7 @@ const Contact = () => {
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
                   <MessageSquare className="w-6 h-6 mr-2" />
-                  Send Us a Message
+                  Contact Telangana Aviation Department
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -241,11 +236,11 @@ const Contact = () => {
                           <SelectValue placeholder="Select inquiry type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="sales">Sales Inquiry</SelectItem>
-                          <SelectItem value="support">Technical Support</SelectItem>
-                          <SelectItem value="demo">Request Demo</SelectItem>
-                          <SelectItem value="partnership">Partnership</SelectItem>
-                          <SelectItem value="security">Security Questions</SelectItem>
+                          <SelectItem value="aviation-clearance">Aviation Clearance</SelectItem>
+                          <SelectItem value="drone-registration">Drone Registration</SelectItem>
+                          <SelectItem value="technical-support">Technical Support</SelectItem>
+                          <SelectItem value="emergency">Emergency Support</SelectItem>
+                          <SelectItem value="partnership">Government Partnership</SelectItem>
                           <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
@@ -255,7 +250,7 @@ const Contact = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">Message</label>
                     <Textarea 
-                      placeholder="Tell us about your requirements and how we can help..."
+                      placeholder="Describe your aviation/drone requirements or inquiry..."
                       className="bg-slate-700 border-slate-600 min-h-32"
                       value={formData.message}
                       onChange={(e) => handleInputChange('message', e.target.value)}
@@ -266,7 +261,7 @@ const Contact = () => {
                   <div className="flex items-center space-x-2">
                     <input type="checkbox" className="rounded border-gray-600" required />
                     <label className="text-sm text-gray-300">
-                      I agree to receive communications from DroneGov and understand that I can unsubscribe at any time.
+                      I agree to receive communications from Telangana Aviation Department and understand government privacy policies.
                     </label>
                   </div>
 
@@ -278,12 +273,12 @@ const Contact = () => {
                     {isSubmitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                        Sending...
+                        Sending to Aviation Department...
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
-                        Send Message
+                        Send to Aviation Department
                       </>
                     )}
                   </Button>
@@ -295,7 +290,7 @@ const Contact = () => {
             <div className="space-y-6">
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Office Locations</CardTitle>
+                  <CardTitle className="text-white">Official Government Offices</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {offices.map((office, index) => (
@@ -342,10 +337,10 @@ const Contact = () => {
                   </div>
                   <div className="mt-4 p-3 bg-slate-700/30 rounded-lg">
                     <p className="text-sm text-gray-300">
-                      <strong className="text-white">Address:</strong> T-Hub, IIIT-H Campus, Gachibowli, Hyderabad, Telangana 500081
+                      <strong className="text-white">Address:</strong> T-Hub Phase-II, IIIT-H Campus, Prof. C R Rao Road, Gachibowli, Hyderabad
                     </p>
                     <p className="text-sm text-gray-300 mt-1">
-                      <strong className="text-white">Landmarks:</strong> Near IIIT Hyderabad, Gachibowli Metro Station
+                      <strong className="text-white">Landmarks:</strong> Near IIIT Hyderabad, Gachibowli Metro Station, Google Office
                     </p>
                   </div>
                 </CardContent>
@@ -353,20 +348,26 @@ const Contact = () => {
 
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Emergency Support</CardTitle>
+                  <CardTitle className="text-white">Emergency Aviation Support</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                      <h3 className="font-semibold text-red-300 mb-2">24/7 Emergency Line</h3>
-                      <p className="text-red-200 text-lg font-bold">+91 8978993018</p>
-                      <p className="text-red-200 text-sm">For critical system failures and emergency support</p>
+                      <h3 className="font-semibold text-red-300 mb-2">24/7 Aviation Emergency</h3>
+                      <p className="text-red-200 text-lg font-bold">+91-100 (Emergency Services)</p>
+                      <p className="text-red-200 text-sm">For aviation emergencies and critical incidents</p>
                     </div>
                     
                     <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                      <h3 className="font-semibold text-yellow-300 mb-2">Priority Support</h3>
-                      <p className="text-yellow-200">Available for enterprise customers with SLA agreements</p>
-                      <p className="text-yellow-200 text-sm">Email: chandrapardhup@gmail.com</p>
+                      <h3 className="font-semibold text-yellow-300 mb-2">Aviation Department Helpline</h3>
+                      <p className="text-yellow-200 text-lg font-bold">+91-40-2345-6789</p>
+                      <p className="text-yellow-200 text-sm">Drone clearances, registrations, and aviation queries</p>
+                    </div>
+
+                    <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                      <h3 className="font-semibold text-blue-300 mb-2">T-Hub Operations Center</h3>
+                      <p className="text-blue-200 text-lg font-bold">+91-40-6677-1020</p>
+                      <p className="text-blue-200 text-sm">Technical support and operational assistance</p>
                     </div>
                   </div>
                 </CardContent>

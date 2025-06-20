@@ -48,7 +48,7 @@ const Index = () => {
     {
       title: "Waste Management",
       description: "Monitor and optimize waste collection routes with real-time tracking",
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop"
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop"
     },
     {
       title: "Environmental Monitoring",
@@ -131,7 +131,7 @@ const Index = () => {
       <StatsSection />
       <TestimonialsSection />
       
-      {/* Enhanced CTA Section */}
+      {/* Enhanced CTA Section with Visible Buttons */}
       <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6 animate-fade-in">
@@ -141,25 +141,25 @@ const Index = () => {
             Join leading government agencies using our advanced drone management platform
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Link to="/signup">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 transform hover:scale-105 transition-all duration-300">
+            <Link to="/dashboard">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 font-semibold px-8 py-4 text-lg shadow-lg">
                 Start Free Trial
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
             <Link to="/dashboard">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300">
-                <Eye className="w-4 h-4 mr-2" />
+              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300 font-semibold px-8 py-4 text-lg bg-transparent">
+                <Eye className="w-5 h-5 mr-2" />
                 View Demo
               </Button>
             </Link>
             <Link to="/learn-more">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300">
+              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300 font-semibold px-8 py-4 text-lg bg-transparent">
                 Learn More
               </Button>
             </Link>
             <Link to="/contact">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300">
+              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300 font-semibold px-8 py-4 text-lg bg-transparent">
                 Schedule Demo
               </Button>
             </Link>
