@@ -1,11 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Zap, AlertTriangle, Play } from "lucide-react";
+import { ExternalLink, Zap, AlertTriangle, Play, Server } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { missionPlannerService } from "@/services/missionPlannerService";
+import { localServerService } from "@/services/localServerService";
 
 interface MissionPlannerLauncherProps {
   onConnectionChange: (connected: boolean) => void;
@@ -15,9 +15,13 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
   const [isConnected, setIsConnected] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
   const [missionPlannerStatus, setMissionPlannerStatus] = useState<'not-running' | 'launching' | 'running'>('not-running');
+  const [localServerRunning, setLocalServerRunning] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check local server status on mount
+    checkLocalServerStatus();
+
     const handleConnection = () => {
       setIsConnected(true);
       onConnectionChange(true);
@@ -47,6 +51,15 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
     };
   }, [onConnectionChange, toast]);
 
+  const checkLocalServerStatus = async () => {
+    try {
+      const status = await localServerService.checkServerStatus();
+      setLocalServerRunning(status);
+    } catch (error) {
+      setLocalServerRunning(false);
+    }
+  };
+
   const handleLaunchMissionPlanner = async () => {
     setIsLaunching(true);
     setMissionPlannerStatus('launching');
@@ -60,61 +73,50 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
           title: "Mission Planner Launched",
           description: "Mission Planner is starting up. Please wait for it to fully load.",
         });
-      } else {
-        // For web version, attempt to open Mission Planner from the specific path
-        const missionPlannerPath = "C:\\Users\\chand\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Mission Planner\\Mission Planner.lnk";
-        
+      } else if (localServerRunning) {
+        // Use local server service for secure launching
         try {
-          // Try to open the specific shortcut file
-          window.open(`file:///${missionPlannerPath}`);
-          setMissionPlannerStatus('running');
-          toast({
-            title: "Mission Planner Launch Attempted",
-            description: "Attempting to open Mission Planner from the specified path.",
-          });
-        } catch (error) {
-          console.error('Failed to launch from specific path:', error);
+          const result = await localServerService.launchMissionPlanner();
           
-          // Fallback to other methods
-          const fallbackPaths = [
-            'missionplanner://', // Protocol handler if registered
-            'file:///C:/Program%20Files/Mission%20Planner/MissionPlanner.exe',
-            'file:///C:/Program%20Files%20(x86)/Mission%20Planner/MissionPlanner.exe'
-          ];
-
-          let launched = false;
-          for (const path of fallbackPaths) {
-            try {
-              window.open(path);
-              launched = true;
-              break;
-            } catch (fallbackError) {
-              continue;
-            }
-          }
-
-          if (launched) {
+          if (result.success) {
             setMissionPlannerStatus('running');
             toast({
-              title: "Mission Planner Launch Attempted",
-              description: "Attempting to open Mission Planner using fallback method.",
+              title: "Mission Planner Launched",
+              description: result.message || "Mission Planner is starting up via local server.",
             });
           } else {
             setMissionPlannerStatus('not-running');
             toast({
-              title: "Manual Launch Required",
-              description: "Please start Mission Planner manually from your desktop or Start menu.",
-              duration: 5000
+              title: "Launch Failed",
+              description: result.message || "Failed to launch Mission Planner.",
+              variant: "destructive"
             });
           }
+        } catch (error: any) {
+          console.error('Local server launch failed:', error);
+          setMissionPlannerStatus('not-running');
+          toast({
+            title: "Local Server Error",
+            description: error.message || "Could not communicate with local server.",
+            variant: "destructive"
+          });
         }
+      } else {
+        // Fallback to browser-based launch (limited functionality)
+        setMissionPlannerStatus('not-running');
+        toast({
+          title: "Local Server Required",
+          description: "Please set up the local server service to launch Mission Planner securely.",
+          variant: "destructive",
+          duration: 5000
+        });
       }
     } catch (error) {
       console.error('Failed to launch Mission Planner:', error);
       setMissionPlannerStatus('not-running');
       toast({
         title: "Launch Failed",
-        description: "Could not auto-launch Mission Planner. Please start it manually.",
+        description: "Could not launch Mission Planner. Please check your setup.",
         variant: "destructive"
       });
     } finally {
@@ -140,7 +142,7 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
       <CardHeader>
         <CardTitle className="text-white flex items-center">
           <ExternalLink className="w-5 h-5 mr-2" />
-          Mission Planner Status
+          Mission Planner Launcher
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -150,17 +152,35 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
             {getStatusText()}
           </Badge>
         </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-gray-300">Local Server:</span>
+          <Badge className={localServerRunning ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}>
+            <Server className="w-3 h-3 mr-1" />
+            {localServerRunning ? 'Ready' : 'Not Connected'}
+          </Badge>
+        </div>
         
-        {missionPlannerStatus === 'not-running' && (
+        {missionPlannerStatus === 'not-running' && localServerRunning && (
           <div className="flex items-start space-x-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <Play className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-blue-300">
               <p className="font-medium">Ready to Launch Mission Planner:</p>
-              <p className="mt-1 text-xs">Click the button below to automatically open Mission Planner, then use the connection panel to connect.</p>
+              <p className="mt-1 text-xs">Click the button below to securely launch Mission Planner via the local server.</p>
             </div>
           </div>
         )}
 
+        {!localServerRunning && (
+          <div className="flex items-start space-x-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+            <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-amber-300">
+              <p className="font-medium">Local Server Setup Required:</p>
+              <p className="mt-1 text-xs">Configure and start the Mission Planner Bridge service to enable secure application launching.</p>
+            </div>
+          </div>
+        )}
+        
         {missionPlannerStatus === 'running' && !isConnected && (
           <div className="flex items-start space-x-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
             <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
@@ -183,6 +203,15 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
         >
           <Zap className="w-4 h-4 mr-2" />
           {isLaunching || missionPlannerStatus === 'launching' ? 'Launching...' : 'Launch Mission Planner'}
+        </Button>
+
+        <Button 
+          onClick={checkLocalServerStatus}
+          variant="outline"
+          className="w-full border-slate-600 text-gray-300 hover:bg-slate-700"
+        >
+          <Server className="w-4 h-4 mr-2" />
+          Refresh Server Status
         </Button>
         
         {isConnected && (

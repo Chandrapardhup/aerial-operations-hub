@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { MissionPlannerLauncher } from "@/components/MissionPlannerLauncher";
 import { MissionPlannerConnection } from "@/components/MissionPlannerConnection";
+import { LocalServerSetup } from "@/components/LocalServerSetup";
 import { DroneSelector } from "@/components/DroneSelector";
 import { MissionStatus } from "@/components/MissionStatus";
 import { FlightControls } from "@/components/FlightControls";
@@ -57,7 +57,6 @@ const MissionControl = () => {
 
     const handleHeartbeat = (heartbeatData: any) => {
       console.log('Heartbeat received:', heartbeatData);
-      // Update connection status based on heartbeat
     };
 
     missionPlannerService.on('telemetry', handleTelemetry);
@@ -93,7 +92,6 @@ const MissionControl = () => {
 
     setChatHistory(prev => [...prev, userMessage]);
 
-    // AI processing for real Mission Planner commands
     const aiResponse = {
       role: "assistant", 
       message: `Processing command: "${chatMessage}". ${selectedDrone && missionPlannerConnected ? `Sending MAVLink commands to drone ${selectedDrone} via Mission Planner` : 'Please ensure drone is selected and Mission Planner is connected'}.`,
@@ -103,10 +101,8 @@ const MissionControl = () => {
     setChatHistory(prev => [...prev, aiResponse]);
     setChatMessage("");
 
-    // Parse AI command and send to Mission Planner
     if (selectedDrone && missionPlannerConnected) {
       try {
-        // Simple command parsing - in a real implementation, you'd use more sophisticated NLP
         const lowerMessage = chatMessage.toLowerCase();
         
         if (lowerMessage.includes('takeoff') || lowerMessage.includes('take off')) {
@@ -141,6 +137,11 @@ const MissionControl = () => {
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-4">Mission Control Center</h1>
             <p className="text-gray-300 text-lg">Real-time drone control with Mission Planner integration</p>
+          </div>
+
+          {/* Local Server Setup */}
+          <div className="mb-8">
+            <LocalServerSetup />
           </div>
 
           {/* Mission Planner Connection and Status */}
