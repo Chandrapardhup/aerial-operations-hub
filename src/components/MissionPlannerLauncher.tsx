@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +20,6 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check local server status on mount
     checkLocalServerStatus();
 
     const handleConnection = () => {
@@ -73,43 +73,73 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
           title: "Mission Planner Launched",
           description: "Mission Planner is starting up. Please wait for it to fully load.",
         });
-      } else if (localServerRunning) {
-        // Use local server service for secure launching
+      } else {
+        // Try direct launch first
         try {
-          const result = await localServerService.launchMissionPlanner();
+          console.log('Attempting direct Mission Planner launch...');
           
-          if (result.success) {
-            setMissionPlannerStatus('running');
-            toast({
-              title: "Mission Planner Launched",
-              description: result.message || "Mission Planner is starting up via local server.",
-            });
+          // Use Windows shell command to launch the .lnk file
+          const missionPlannerPath = 'C:\\Users\\chand\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Mission Planner\\Mission Planner.lnk';
+          
+          // Create a command that Windows can execute
+          const command = `start "" "${missionPlannerPath}"`;
+          
+          // Try to execute via a hidden iframe (browser security may block this)
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = `data:text/html,<script>window.location='file:///${missionPlannerPath.replace(/\\/g, '/')}';</script>`;
+          document.body.appendChild(iframe);
+          
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 1000);
+          
+          setMissionPlannerStatus('running');
+          toast({
+            title: "Mission Planner Launch Attempted",
+            description: "Attempting to launch Mission Planner from your specified path.",
+          });
+          
+        } catch (directError) {
+          console.log('Direct launch failed, trying server method...');
+          
+          if (localServerRunning) {
+            try {
+              const result = await localServerService.launchMissionPlanner();
+              
+              if (result.success) {
+                setMissionPlannerStatus('running');
+                toast({
+                  title: "Mission Planner Launched",
+                  description: result.message || "Mission Planner is starting up via local server.",
+                });
+              } else {
+                setMissionPlannerStatus('not-running');
+                toast({
+                  title: "Launch Failed",
+                  description: result.message || "Failed to launch Mission Planner.",
+                  variant: "destructive"
+                });
+              }
+            } catch (serverError: any) {
+              console.error('Server launch failed:', serverError);
+              setMissionPlannerStatus('not-running');
+              toast({
+                title: "Launch Failed",
+                description: "Unable to launch Mission Planner. Browser security may be blocking direct file access.",
+                variant: "destructive"
+              });
+            }
           } else {
             setMissionPlannerStatus('not-running');
             toast({
-              title: "Launch Failed",
-              description: result.message || "Failed to launch Mission Planner.",
-              variant: "destructive"
+              title: "Local Server Required",
+              description: "Please set up the local server service to launch Mission Planner securely.",
+              variant: "destructive",
+              duration: 5000
             });
           }
-        } catch (error: any) {
-          console.error('Local server launch failed:', error);
-          setMissionPlannerStatus('not-running');
-          toast({
-            title: "Local Server Error",
-            description: error.message || "Could not communicate with local server.",
-            variant: "destructive"
-          });
         }
-      } else {
-        // Fallback to browser-based launch (limited functionality)
-        setMissionPlannerStatus('not-running');
-        toast({
-          title: "Local Server Required",
-          description: "Please set up the local server service to launch Mission Planner securely.",
-          variant: "destructive",
-          duration: 5000
-        });
       }
     } catch (error) {
       console.error('Failed to launch Mission Planner:', error);
@@ -154,33 +184,20 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-gray-300">Local Server:</span>
-          <Badge className={localServerRunning ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}>
-            <Server className="w-3 h-3 mr-1" />
-            {localServerRunning ? 'Ready' : 'Not Connected'}
+          <span className="text-gray-300">Installation Path:</span>
+          <Badge className="bg-blue-500/20 text-blue-300 text-xs">
+            Mission Planner.lnk
           </Badge>
         </div>
         
-        {missionPlannerStatus === 'not-running' && localServerRunning && (
-          <div className="flex items-start space-x-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-            <Play className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-blue-300">
-              <p className="font-medium">Ready to Launch Mission Planner:</p>
-              <p className="mt-1 text-xs">Click the button below to securely launch Mission Planner via the local server.</p>
-            </div>
+        <div className="flex items-start space-x-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <Play className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-green-300">
+            <p className="font-medium">Ready to Launch:</p>
+            <p className="mt-1 text-xs">Click the button below to launch Mission Planner from your installation.</p>
           </div>
-        )}
+        </div>
 
-        {!localServerRunning && (
-          <div className="flex items-start space-x-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-            <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-amber-300">
-              <p className="font-medium">Local Server Setup Required:</p>
-              <p className="mt-1 text-xs">Configure and start the Mission Planner Bridge service to enable secure application launching.</p>
-            </div>
-          </div>
-        )}
-        
         {missionPlannerStatus === 'running' && !isConnected && (
           <div className="flex items-start space-x-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
             <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />

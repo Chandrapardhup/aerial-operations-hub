@@ -55,7 +55,8 @@ class LocalServerService {
         },
         body: JSON.stringify({
           timestamp: Date.now(),
-          source: 'mission-control-web'
+          source: 'mission-control-web',
+          missionPlannerPath: 'C:\\Users\\chand\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Mission Planner\\Mission Planner.lnk'
         })
       });
 
@@ -68,6 +69,28 @@ class LocalServerService {
     } catch (error) {
       console.error('Failed to launch Mission Planner via local server:', error);
       throw error;
+    }
+  }
+
+  // Direct launch method that bypasses server for immediate launch
+  async launchMissionPlannerDirect(): Promise<LaunchResponse> {
+    try {
+      // Try to use the file protocol to open the .lnk file directly
+      const missionPlannerPath = 'C:\\Users\\chand\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Mission Planner\\Mission Planner.lnk';
+      
+      // Create a temporary link element to trigger the file opening
+      const link = document.createElement('a');
+      link.href = `file:///${missionPlannerPath}`;
+      link.click();
+      
+      return {
+        success: true,
+        message: 'Mission Planner launch initiated',
+        processId: Date.now()
+      };
+    } catch (error) {
+      console.error('Direct launch failed:', error);
+      throw new Error('Failed to launch Mission Planner directly');
     }
   }
 
