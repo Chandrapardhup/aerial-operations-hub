@@ -5,13 +5,14 @@ This guide explains how to set up the Mission Planner Bridge service for secure 
 
 ## Overview
 
-The Mission Planner Bridge is a local HTTP server that runs on your machine and provides secure access to launch Mission Planner and other system applications. This approach ensures security while enabling web-based control.
+The Mission Planner Bridge is a local HTTP server that runs on your machine and provides secure access to launch Mission Planner. This approach ensures security while enabling web-based control and maintains compatibility with Mission Planner's WebSocket server on port 8080.
 
 ## Prerequisites
 
-- Mission Planner installed on your local machine
+- Mission Planner installed at: `C:\Program Files (x86)\Mission Planner\MissionPlanner.exe`
 - Node.js (version 14 or higher)
 - Basic command line knowledge
+- Administrator privileges for file system access
 
 ## Installation Steps
 
@@ -28,11 +29,11 @@ npm init -y
 ### 2. Install Dependencies
 
 ```bash
-npm install express cors helmet child_process path
+npm install express cors helmet child_process path fs
 npm install --save-dev @types/node @types/express typescript ts-node
 ```
 
-### 3. Create the Server
+### 3. Create the Enhanced Server
 
 Create `server.ts`:
 
@@ -41,11 +42,13 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { spawn, exec } from 'child_process';
+import { existsSync } from 'fs';
 import path from 'path';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const API_KEY = process.env.API_KEY || '';
+const MISSION_PLANNER_PATH = 'C:\\Program Files (x86)\\Mission Planner\\MissionPlanner.exe';
 
 // Security middleware
 app.use(helmet());
@@ -68,73 +71,109 @@ const authenticateApiKey = (req: any, res: any, next: any) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    missionPlannerPath: MISSION_PLANNER_PATH,
+    pathExists: existsSync(MISSION_PLANNER_PATH)
+  });
+});
+
+// Verify Mission Planner installation path
+app.post('/verify/mission-planner-path', authenticateApiKey, (req, res) => {
+  const { path: requestedPath } = req.body;
+  const pathToCheck = requestedPath || MISSION_PLANNER_PATH;
+  
+  try {
+    const exists = existsSync(pathToCheck);
+    res.json({
+      exists,
+      path: pathToCheck,
+      message: exists ? 'Path verified successfully' : 'Mission Planner executable not found at specified path'
+    });
+  } catch (error) {
+    res.status(500).json({
+      exists: false,
+      path: pathToCheck,
+      message: 'Error checking path: ' + (error instanceof Error ? error.message : 'Unknown error')
+    });
+  }
 });
 
 // Launch Mission Planner
 app.post('/launch/mission-planner', authenticateApiKey, (req, res) => {
   try {
-    // Common Mission Planner installation paths
-    const possiblePaths = [
-      'C:\\Program Files\\Mission Planner\\MissionPlanner.exe',
-      'C:\\Program Files (x86)\\Mission Planner\\MissionPlanner.exe',
-      process.env.MISSION_PLANNER_PATH || ''
-    ].filter(Boolean);
-
-    let launched = false;
-    
-    for (const missionPlannerPath of possiblePaths) {
-      try {
-        const child = spawn(missionPlannerPath, [], {
-          detached: true,
-          stdio: 'ignore'
-        });
-        
-        child.unref();
-        launched = true;
-        
-        res.json({
-          success: true,
-          message: 'Mission Planner launched successfully',
-          processId: child.pid,
-          path: missionPlannerPath
-        });
-        break;
-      } catch (error) {
-        continue;
-      }
-    }
-
-    if (!launched) {
-      res.status(500).json({
+    if (!existsSync(MISSION_PLANNER_PATH)) {
+      return res.status(404).json({
         success: false,
-        message: 'Could not find Mission Planner executable. Please check installation path.'
+        message: `Mission Planner not found at: ${MISSION_PLANNER_PATH}. Please verify installation.`,
+        path: MISSION_PLANNER_PATH
       });
     }
+
+    const child = spawn(MISSION_PLANNER_PATH, [], {
+      detached: true,
+      stdio: 'ignore'
+    });
+    
+    child.unref();
+    
+    res.json({
+      success: true,
+      message: 'Mission Planner launched successfully. WebSocket server will be available on port 8080.',
+      processId: child.pid,
+      path: MISSION_PLANNER_PATH,
+      webSocketPort: 8080
+    });
+
+    console.log(`Mission Planner launched with PID: ${child.pid}`);
+    
   } catch (error) {
+    console.error('Launch error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to launch Mission Planner',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      message: 'Failed to launch Mission Planner: ' + (error instanceof Error ? error.message : 'Unknown error'),
+      path: MISSION_PLANNER_PATH
     });
   }
 });
 
-// Check Mission Planner status
+// Check Mission Planner status with WebSocket readiness
 app.get('/status/mission-planner', authenticateApiKey, (req, res) => {
   exec('tasklist /FI "IMAGENAME eq MissionPlanner.exe"', (error, stdout, stderr) => {
     if (error) {
-      res.json({ isRunning: false });
+      res.json({ 
+        isRunning: false,
+        webSocketReady: false
+      });
       return;
     }
     
     const isRunning = stdout.includes('MissionPlanner.exe');
-    res.json({ isRunning });
+    
+    // If running, check if WebSocket port 8080 is accessible
+    if (isRunning) {
+      exec('netstat -an | findstr :8080', (wsError, wsStdout) => {
+        const webSocketReady = !wsError && wsStdout.includes(':8080');
+        res.json({ 
+          isRunning,
+          webSocketReady,
+          webSocketPort: 8080
+        });
+      });
+    } else {
+      res.json({ 
+        isRunning: false,
+        webSocketReady: false
+      });
+    }
   });
 });
 
 app.listen(PORT, () => {
   console.log(`Mission Planner Bridge running on port ${PORT}`);
+  console.log(`Mission Planner path: ${MISSION_PLANNER_PATH}`);
+  console.log(`Path exists: ${existsSync(MISSION_PLANNER_PATH)}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
 });
 ```

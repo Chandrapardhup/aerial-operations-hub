@@ -18,10 +18,12 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
   const [isLaunching, setIsLaunching] = useState(false);
   const [missionPlannerStatus, setMissionPlannerStatus] = useState<'not-running' | 'launching' | 'running'>('not-running');
   const [localServerRunning, setLocalServerRunning] = useState(false);
+  const [pathVerified, setPathVerified] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     checkLocalServerStatus();
+    verifyInstallationPath();
 
     const handleConnection = () => {
       setIsConnected(true);
@@ -61,94 +63,89 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
     }
   };
 
+  const verifyInstallationPath = async () => {
+    if (!localServerRunning) return;
+    
+    try {
+      const verification = await localServerService.verifyMissionPlannerPath();
+      setPathVerified(verification.exists);
+      
+      if (!verification.exists) {
+        toast({
+          title: "Installation Path Issue",
+          description: `Mission Planner not found at expected path: ${verification.path}`,
+          variant: "destructive",
+          duration: 5000
+        });
+      }
+    } catch (error) {
+      console.error('Path verification failed:', error);
+      setPathVerified(false);
+    }
+  };
+
   const handleLaunchMissionPlanner = async () => {
     setIsLaunching(true);
     setMissionPlannerStatus('launching');
     
     try {
-      if (window.electronAPI) {
-        // If running in Electron, use the native launcher
-        await window.electronAPI.openMissionPlanner();
+      if (!localServerRunning) {
+        throw new Error('Local server is not running. Please start the Mission Planner Bridge service first.');
+      }
+
+      console.log('Launching Mission Planner via local server...');
+      console.log('Expected path:', localServerService.getMissionPlannerPath());
+      
+      const result = await localServerService.launchMissionPlanner();
+      
+      if (result.success) {
         setMissionPlannerStatus('running');
         toast({
           title: "Mission Planner Launched",
-          description: "Mission Planner is starting up. Please wait for it to fully load.",
+          description: `Mission Planner is starting up. WebSocket server will be available on port 8080.`,
         });
-      } else {
-        // Try direct launch first
-        try {
-          console.log('Attempting direct Mission Planner launch...');
-          
-          // Use Windows shell command to launch the .lnk file
-          const missionPlannerPath = 'C:\\Users\\chand\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Mission Planner\\Mission Planner.lnk';
-          
-          // Create a command that Windows can execute
-          const command = `start "" "${missionPlannerPath}"`;
-          
-          // Try to execute via a hidden iframe (browser security may block this)
-          const iframe = document.createElement('iframe');
-          iframe.style.display = 'none';
-          iframe.src = `data:text/html,<script>window.location='file:///${missionPlannerPath.replace(/\\/g, '/')}';</script>`;
-          document.body.appendChild(iframe);
-          
-          setTimeout(() => {
-            document.body.removeChild(iframe);
-          }, 1000);
-          
-          setMissionPlannerStatus('running');
-          toast({
-            title: "Mission Planner Launch Attempted",
-            description: "Attempting to launch Mission Planner from your specified path.",
-          });
-          
-        } catch (directError) {
-          console.log('Direct launch failed, trying server method...');
-          
-          if (localServerRunning) {
-            try {
-              const result = await localServerService.launchMissionPlanner();
-              
-              if (result.success) {
-                setMissionPlannerStatus('running');
-                toast({
-                  title: "Mission Planner Launched",
-                  description: result.message || "Mission Planner is starting up via local server.",
-                });
-              } else {
-                setMissionPlannerStatus('not-running');
-                toast({
-                  title: "Launch Failed",
-                  description: result.message || "Failed to launch Mission Planner.",
-                  variant: "destructive"
-                });
-              }
-            } catch (serverError: any) {
-              console.error('Server launch failed:', serverError);
-              setMissionPlannerStatus('not-running');
+
+        // Check if Mission Planner WebSocket becomes available
+        setTimeout(async () => {
+          try {
+            const status = await localServerService.getMissionPlannerStatus();
+            if (status.webSocketReady) {
               toast({
-                title: "Launch Failed",
-                description: "Unable to launch Mission Planner. Browser security may be blocking direct file access.",
-                variant: "destructive"
+                title: "WebSocket Ready",
+                description: "Mission Planner WebSocket server is now available for connections.",
               });
             }
-          } else {
-            setMissionPlannerStatus('not-running');
-            toast({
-              title: "Local Server Required",
-              description: "Please set up the local server service to launch Mission Planner securely.",
-              variant: "destructive",
-              duration: 5000
-            });
+          } catch (error) {
+            console.log('WebSocket status check failed:', error);
           }
-        }
+        }, 5000);
+      } else {
+        setMissionPlannerStatus('not-running');
+        toast({
+          title: "Launch Failed",
+          description: result.message || "Mission Planner could not be launched. Please check the installation path or permissions.",
+          variant: "destructive"
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to launch Mission Planner:', error);
       setMissionPlannerStatus('not-running');
+      
+      let errorMessage = "Mission Planner could not be launched. Please check the installation path or permissions.";
+      
+      if (error.message.includes('Local server')) {
+        errorMessage = "Local server is not running. Please start the Mission Planner Bridge service.";
+      } else if (error.message.includes('path')) {
+        errorMessage = `Mission Planner not found at: ${localServerService.getMissionPlannerPath()}. Please verify the installation.`;
+      } else if (error.message.includes('permissions')) {
+        errorMessage = "Permission denied. Please run the local server with administrator privileges.";
+      }
+      
       toast({
         title: "Launch Failed",
-        description: "Could not launch Mission Planner. Please check your setup.",
-        variant: "destructive"
+        description: errorMessage,
+        variant: "destructive",
+        duration: 7000
       });
     } finally {
       setIsLaunching(false);
@@ -168,6 +165,18 @@ export const MissionPlannerLauncher = ({ onConnectionChange }: MissionPlannerLau
           isConnected={isConnected}
           missionPlannerStatus={missionPlannerStatus}
         />
+        
+        <div className="flex items-center justify-between">
+          <span className="text-gray-300">Installation Path:</span>
+          <div className="text-right">
+            <div className="text-xs text-blue-300 font-mono">
+              {localServerService.getMissionPlannerPath()}
+            </div>
+            <div className={`text-xs ${pathVerified ? 'text-green-400' : 'text-red-400'}`}>
+              {pathVerified ? '✓ Verified' : '✗ Not verified'}
+            </div>
+          </div>
+        </div>
         
         <LaunchInstructions 
           missionPlannerStatus={missionPlannerStatus}

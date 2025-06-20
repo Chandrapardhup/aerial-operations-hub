@@ -9,11 +9,13 @@ interface LaunchResponse {
   success: boolean;
   message: string;
   processId?: number;
+  path?: string;
 }
 
 class LocalServerService {
   private config: LocalServerConfig;
   private isServerRunning: boolean = false;
+  private readonly MISSION_PLANNER_PATH = 'C:\\Program Files (x86)\\Mission Planner\\MissionPlanner.exe';
 
   constructor(config: LocalServerConfig = { host: 'localhost', port: 3001 }) {
     this.config = config;
@@ -56,12 +58,14 @@ class LocalServerService {
         body: JSON.stringify({
           timestamp: Date.now(),
           source: 'mission-control-web',
-          missionPlannerPath: 'C:\\Users\\chand\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Mission Planner\\Mission Planner.lnk'
+          missionPlannerPath: this.MISSION_PLANNER_PATH,
+          expectedWebSocketPort: 8080
         })
       });
 
       if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({ message: 'Unknown server error' }));
+        throw new Error(`Server responded with status ${response.status}: ${errorData.message || 'Launch failed'}`);
       }
 
       const result: LaunchResponse = await response.json();
@@ -72,29 +76,39 @@ class LocalServerService {
     }
   }
 
-  // Direct launch method that bypasses server for immediate launch
-  async launchMissionPlannerDirect(): Promise<LaunchResponse> {
+  async verifyMissionPlannerPath(): Promise<{ exists: boolean; path: string; message: string }> {
     try {
-      // Try to use the file protocol to open the .lnk file directly
-      const missionPlannerPath = 'C:\\Users\\chand\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Mission Planner\\Mission Planner.lnk';
-      
-      // Create a temporary link element to trigger the file opening
-      const link = document.createElement('a');
-      link.href = `file:///${missionPlannerPath}`;
-      link.click();
-      
-      return {
-        success: true,
-        message: 'Mission Planner launch initiated',
-        processId: Date.now()
-      };
+      const response = await fetch(`http://${this.config.host}:${this.config.port}/verify/mission-planner-path`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(this.config.apiKey && { 'Authorization': `Bearer ${this.config.apiKey}` })
+        },
+        body: JSON.stringify({
+          path: this.MISSION_PLANNER_PATH
+        })
+      });
+
+      if (!response.ok) {
+        return {
+          exists: false,
+          path: this.MISSION_PLANNER_PATH,
+          message: 'Unable to verify path - server not responding'
+        };
+      }
+
+      return await response.json();
     } catch (error) {
-      console.error('Direct launch failed:', error);
-      throw new Error('Failed to launch Mission Planner directly');
+      console.error('Failed to verify Mission Planner path:', error);
+      return {
+        exists: false,
+        path: this.MISSION_PLANNER_PATH,
+        message: 'Unable to verify path - connection failed'
+      };
     }
   }
 
-  async getMissionPlannerStatus(): Promise<{ isRunning: boolean; processId?: number }> {
+  async getMissionPlannerStatus(): Promise<{ isRunning: boolean; processId?: number; webSocketReady?: boolean }> {
     try {
       const response = await fetch(`http://${this.config.host}:${this.config.port}/status/mission-planner`, {
         method: 'GET',
@@ -113,6 +127,10 @@ class LocalServerService {
       console.error('Failed to get Mission Planner status:', error);
       return { isRunning: false };
     }
+  }
+
+  getMissionPlannerPath(): string {
+    return this.MISSION_PLANNER_PATH;
   }
 
   updateConfig(newConfig: Partial<LocalServerConfig>): void {
