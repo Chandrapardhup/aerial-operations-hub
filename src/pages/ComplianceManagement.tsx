@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { FileText, Eye, Download, Plus, Filter } from "lucide-react";
+import { FileText, Eye, Download, Plus, Filter, Bolt } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ComplianceManagement = () => {
@@ -129,6 +129,14 @@ const ComplianceManagement = () => {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Built with bolt.new Badge */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-none px-3 py-2 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Bolt className="w-4 h-4 mr-2" />
+          Built with bolt.new
+        </Badge>
       </div>
     </div>
   );
